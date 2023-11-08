@@ -8,7 +8,6 @@ var logger = require('morgan');
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 
 //Crea al aplicacion express
@@ -36,7 +35,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Instalacion de MWs router que atienden a las rutas indicadas
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 
 /*Instalacion de MW que atiende cualquier transaccion HTTP con cualquier ruta que no se haya atendido por los 
