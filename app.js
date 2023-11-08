@@ -17,6 +17,7 @@ var app = express();
 
 //Define views como directorio que contiene vistas
 app.set('views', path.join(__dirname, 'views'));
+
 //Instala el renderizador de vistas EJS
 app.set('view engine', 'ejs');
 
@@ -38,20 +39,24 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 
-//Instalacion de MWs de error
+/*Instalacion de MW que atiende cualquier transaccion HTTP con cualquier ruta que no se haya atendido por los 
+MWs AuthenticatorAssertionResponse. Este MW envia la respuesta 404 Not Found invocando el siguiente MW de error*/
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
 
-//Instalacion de MWs de error
+//Instalacion de MWs de error que envia la respuesta HTTP con res.render('error')
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+  
+  //Se incluyen en res.local mensajes que podran ser accedidos en la vista 'error'
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  //Si no se ha definido el codigo de respuesta se envia 500
   res.status(err.status || 500);
+
+  //Renderiza y envia la vista de respuesta a errores
   res.render('error');
 });
 
