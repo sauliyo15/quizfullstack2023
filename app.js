@@ -1,33 +1,50 @@
+//Importacion de modulos del sistems o instalados como paquetes npm
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+
+//Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+
+//Crea al aplicacion express
 var app = express();
 
-// view engine setup
+
+//Define views como directorio que contiene vistas
 app.set('views', path.join(__dirname, 'views'));
+//Instala el renderizador de vistas EJS
 app.set('view engine', 'ejs');
 
+
+//Instlacion de MWs genericos instalados como paquetes npm
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+//Cookieparser para el manejo de cookies
 app.use(cookieParser());
+
+//Servidor estatico para servir paginas estaticas, javascript, estilos, etc..que esten en el directorio public
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+//Instalacion de MWs router que atienden a las rutas indicadas
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
+
+//Instalacion de MWs de error
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
+
+//Instalacion de MWs de error
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -38,4 +55,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+//Se define el modulo como exportable ya que se importará en el fichero de arranque wwww
 module.exports = app;
