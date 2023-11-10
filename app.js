@@ -5,6 +5,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+//Se importa el modulo para poder instalar el MW para servir el icono
+var favicon = require('serve-favicon');
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
@@ -31,6 +34,9 @@ app.use(cookieParser());
 
 //Servidor estatico para servir paginas estaticas, javascript, estilos, etc..que esten en el directorio public
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Instalacion del MW para gestionar el favicon y visualizar el icono ubicado en la carpeta public
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas
