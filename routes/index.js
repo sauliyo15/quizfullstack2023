@@ -9,7 +9,7 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
 
   //Se elabora la respuesta con la renderizacion de la vista index.ejs pasando como parametro la variable title
-  res.render('index', { title: 'Hola soy Saúl' });
+  res.render('index', { title: 'Bienvenido al juego' });
 });
 
 
