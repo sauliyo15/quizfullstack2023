@@ -8,8 +8,8 @@ var router = express.Router();
 //Instalacion de MWs router que atienden a las rutas indicadas: /
 router.get('/', function(req, res, next) {
 
-  //Se elabora la respuesta con la renderizacion de la vista index.ejs pasando como parametro la variable title
-  res.render('index', { title: 'Juego' });
+  //Se elabora la respuesta con la renderizacion de la vista index.ejs
+  res.render('index');
 });
 
 //Instalacion de MWs router que atienden a las rutas indicadas: /autor

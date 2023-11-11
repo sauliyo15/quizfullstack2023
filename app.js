@@ -8,6 +8,9 @@ var logger = require('morgan');
 //Se importa el modulo para poder instalar el MW para servir el icono
 var favicon = require('serve-favicon');
 
+//Se importa el modulo para poder servir un marco comun (cabecera, navegacion y pie) a todas las vistas
+var partials = require('express-partials');
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
@@ -37,6 +40,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //Instalacion del MW para gestionar el favicon y visualizar el icono ubicado en la carpeta public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+//Instalacion del MW para sevir el marco comun a todas las vistas por defecto es, layout.ejs
+app.use(partials());
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas
