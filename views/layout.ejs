@@ -29,6 +29,9 @@
       href="/stylesheets/smartphone.css"
     />
 
+    <!--Se carga el estilo por defecto de cookieconsent-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css">
+
   </head>
   <body>
 
@@ -57,4 +60,25 @@
     </div>
 
   </body>
+  <!--Se carga el script de cookieconsent y se inicializa parametrizando aspectos visuales en palette y su contenido en content-->
+  <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+  <script>
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#252e39"
+        },
+        "button": {
+          "background": "#14a7d0"
+        }
+      },
+      "content": {
+        "message": "Este sitio web utiliza cookies para garantizar que obtenga la mejor experiencia en nuestro sitio.",
+        "dismiss": "Aceptar",
+        "link": "Más información",
+        "href": "https://policies.google.com/technologies/cookies?hl=es"
+    }
+    });
+  </script>
+
 </html>
