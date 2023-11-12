@@ -1,0 +1,24 @@
+body {
+    background: #999;
+}
+
+#page::after {
+    color: white;
+    content: "Wide Layout";
+}
+
+#mainNav {
+    /*Indica que #mainNav no crece y su tamaño se ajusta automaticamente al contenido*/
+    flex: 0 auto;
+}
+
+#mainNav a {
+    display: block;
+    text-align: left;
+}
+
+#mainSection {
+    /*Indica que #mainSection crece y ajusta su tamaño al hueco existente*/
+    flex: 1;
+    overflow: auto;
+}
