@@ -11,6 +11,9 @@ var favicon = require('serve-favicon');
 //Se importa el modulo para poder servir un marco comun (cabecera, navegacion y pie) a todas las vistas
 var partials = require('express-partials');
 
+//Se importa el modulo para poder simular PUT y DELET en peticiones GET y POST (estas son las unicas que permite HTML)
+var methodOverride = require('method-override');
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
@@ -43,6 +46,9 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 //Instalacion del MW para sevir el marco comun a todas las vistas por defecto es, layout.ejs
 app.use(partials());
+
+//Instalacion del MW para poder realizar las solicitudes PUT o DELETE en HTML
+app.use(methodOverride('_method', {methods: ["POST", "GET"]}));
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas
