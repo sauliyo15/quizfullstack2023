@@ -4,7 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "super": "supervisor ./bin/www"
+    "super": "supervisor ./bin/www",
+    "migrate": "sequelize db:migrate --url sqlite://$(pwd)/juegos_bbdd.sqlite",
+    "seed": "sequelize db:seed:all --url sqlite://$(pwd)/juegos_bbdd.sqlite",
+    "migrate_win": "sequelize db:migrate --url sqlite://%cd%/juegos_bbdd.sqlite",
+    "seed_win": "sequelize db:seed:all --url sqlite://%cd%/juegos_bbdd.sqlite",
+    "migrate_env": "sequelize db:migrate --url $DATABASE_URL",
+    "seed_env": "sequelize db:seed:all --url $DATABASE_URL"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
