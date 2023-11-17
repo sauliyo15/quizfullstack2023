@@ -27,7 +27,7 @@ router.param('juegoId', juegoController.load);
 
 //Instalacion de MWs router que atienden a las rutas relacionadas con el interfaz CRUD de los Juegos
 router.get('/juegos', juegoController.index);
-//router.get('/juegos/:juegoId(\\d+)', juegoController.show);
+router.get('/juegos/:juegoId(\\d+)', juegoController.show);
 //router.get('/juegos/new', juegoController.new);
 //router.post('juegos', juegoController.create);
 //router.get('/juegos/:juegoId(\\d+)/edit', juegoController.edit);

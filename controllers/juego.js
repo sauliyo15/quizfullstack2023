@@ -32,6 +32,21 @@ exports.index = async (req, res, next) => {
 
     //Se llama a la renderizacion de la vista, incluyendo como parametro los juegos obtenidos
     res.render("juegos/index.ejs", { juegos });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+//GET /juegos/:juegoId
+exports.show = (req, res, next) => {
+  try {
+    //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+    const {juego} = req.load;
+
+    //Se llama a la renderizacion de la vista, incluyendo como parametro el juego
+    res.render("juegos/show.ejs", { juego });
     
   } catch (error) {
     next(error);
