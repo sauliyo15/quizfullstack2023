@@ -10,14 +10,29 @@ exports.load = async (req, res, next, juegoId) => {
     //Se busca el juego a traves de su id en la base de datos
     const juego = await models.Juego.findByPk(juegoId);
     if (juego) {
-      //Si se encuentra el juego, se agrega al objeto 'load' en el objeto 'req' y se pasa al siguiente middleware o controlador  
+      //Si se encuentra el juego, se agrega al objeto 'load' en el objeto 'req' y se pasa al siguiente middleware o controlador
       req.load = { ...req.load, juego }; //Spread (clonacion)
       next();
     } else {
-      //Si no se encuentra el juego, se lanza un error  
+      //Si no se encuentra el juego, se lanza un error
       throw new Error("No existe ningún juego con id: " + juegoId);
     }
-  //Si hay un error durante la busqueda del juego, se pasa al siguiente middleware con el error  
+    //Si hay un error durante la busqueda del juego, se pasa al siguiente middleware con el error
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+//GET /juegos
+exports.index = async (req, res, next) => {
+  try {
+    //Se buscan todos los juegos en la base de datos
+    const juegos = await models.Juego.findAll();
+
+    //Se llama a la renderizacion de la vista, incluyendo como parametro los juegos obtenidos
+    res.render("juegos/index.ejs", { juegos });
+    
   } catch (error) {
     next(error);
   }
