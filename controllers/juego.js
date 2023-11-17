@@ -41,14 +41,21 @@ exports.index = async (req, res, next) => {
 
 //GET /juegos/:juegoId
 exports.show = (req, res, next) => {
-  try {
-    //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
-    const {juego} = req.load;
+  
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {juego} = req.load;
 
-    //Se llama a la renderizacion de la vista, incluyendo como parametro el juego
-    res.render("juegos/show.ejs", { juego });
-    
-  } catch (error) {
-    next(error);
-  }
+  //Se llama a la renderizacion de la vista, incluyendo como parametro el juego
+  res.render("juegos/show.ejs", { juego });
+};
+
+
+//GET /juegos/new
+exports.new = (req, res, next) => {
+  
+  //Creamos un objeto con strings vacios para que se represente así en el formulario de la vista
+  const juego = {pregunta: "", respuesta: ""};
+
+  //Se llama a la renderizacion de la vista, incluyendo como parametro el juego
+  res.render("juegos/new.ejs", { juego });
 };
