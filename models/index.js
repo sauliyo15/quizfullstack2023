@@ -11,6 +11,7 @@ const url = process.env.DATABASE_URL || "sqlite:juegos_bbdd.sqlite";
 //Se crea una nueva instancia de Sequelize utilizando la URL de la base de datos
 const sequelize = new Sequelize(url);
 
+//OJO! IMPORTANTE el metodo import no funciona a partir de la version 6 de sequelize/sequelize-cli
 
 //Se importa el modelo Juego desde el archivo 'juego' en el mismo directorio que este script
 const Juego = sequelize.import(path.join(__dirname, 'juego'));
