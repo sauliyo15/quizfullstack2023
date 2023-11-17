@@ -41,3 +41,19 @@ body {
 a {
   color: #00B7FF;
 }
+
+.wideRow {
+  display: flex;
+  flex-flow: row wrap;
+  align-content: stretch;
+}
+
+.wideRow .itemNarrow {
+  flex: 0 auto;
+  margin: 0px 5px;
+}
+
+/*.wideRow .itemWide {
+  flex: 1 auto;
+  margin: 0px 5px;
+}*/

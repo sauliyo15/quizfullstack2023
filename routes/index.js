@@ -29,7 +29,7 @@ router.param('juegoId', juegoController.load);
 router.get('/juegos', juegoController.index);
 router.get('/juegos/:juegoId(\\d+)', juegoController.show);
 router.get('/juegos/new', juegoController.new);
-//router.post('juegos', juegoController.create);
+router.post('/juegos', juegoController.create);
 //router.get('/juegos/:juegoId(\\d+)/edit', juegoController.edit);
 //router.put('/juegos/:juegoId(\\d+)', juegoController.update);
 //router.delete('/juegos/:juegoId(\\d+)', juegoController.destroy);

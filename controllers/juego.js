@@ -1,3 +1,6 @@
+//Se importia el modulo sequelize
+const { Sequelize } = require("sequelize");
+
 //Se importa del directorio models el archivo index (nombre principal por defecto)
 const { models } = require("../models");
 
@@ -58,4 +61,35 @@ exports.new = (req, res, next) => {
 
   //Se llama a la renderizacion de la vista, incluyendo como parametro el juego
   res.render("juegos/new.ejs", { juego });
+};
+
+
+//POST /juegos
+exports.create = async (req, res, next) => {
+
+  //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
+  const {pregunta, respuesta} = req.body;
+
+  //Crea un objeto compatible con la tabla juegos
+  let juego = models.Juego.build({pregunta, respuesta});
+
+  try {
+    //Crea una nueva entrada en la tabla de la base de datos con pregunta y respuesta
+    juego = await juego.save({fields: ["pregunta", "respuesta"]});
+
+    //Una vez almacenado en la base de datos el juego, se redirige a la visualizacion del mismo
+    res.redirect('/juegos/' + juego.id);    
+
+  } catch (error) {
+    //Si algun cajetin esta vacio se generara un error de validacion
+    if (error instanceof Sequelize.ValidationError) {
+      console.log('Hay errores en el formulario');
+      error.errors.forEach(({ message }) => console.log(message));
+      res.render("juegos/new", { juego });
+    }
+    else {
+      //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+      next(error);
+    }
+  }
 };
