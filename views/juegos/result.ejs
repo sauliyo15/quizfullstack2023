@@ -1,0 +1,12 @@
+<h1>Resultado: </h1>
+<!--Se analiza el contenido de resultado para mostrar el mensaje adecuado-->
+<p>La respuesta <strong> <%= respuesta %> </strong> es <strong><%= resultado ? 'correcta' : 'incorrecta' %></strong></p>
+
+<p>
+    <!--Si el resultado no ha sido el correcto, se habilita un enlace con la respuesta como parametro oculto para volver a la pantalla de jugar-->
+    <% if (!resultado) { %>
+        <a href="/juegos/<%= juego.id %>/play?respuesta=<%= respuesta %>">Prueba otra vez</a>
+    <% } %>
+</p>
+
+<a href="/juegos" class="button">Atrás</a>

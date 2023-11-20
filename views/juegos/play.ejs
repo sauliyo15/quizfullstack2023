@@ -1,0 +1,19 @@
+<h1>Jugar: </h1>
+
+<form method="get" action="/juegos/<%= juego.id %>/check">
+
+    <p>Pregunta: <b><%= juego.pregunta %></b></p>
+
+    <div class="wideRow">
+        <!--Si la variable respuesta tiene algun contenido se mostrara (vendremos de un intento anterior)-->
+        <input type="text" class="itemWide"
+                name="respuesta" value="<%= respuesta %>"
+                placeholder="Respuesta" autocomplete="off"/>
+        
+        <input type="submit" class="itemNarrow" value="Comprobar">
+
+    </div>
+
+</form>
+
+<a href="/juegos" class="button">Atrás</a>

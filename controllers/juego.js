@@ -156,3 +156,40 @@ exports.destroy = async (req, res, next) => {
     next(error)
   }
 };
+
+
+//GET /juegos/:juegoId/play
+exports.play = (req, res, next) => {
+
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {juego} = req.load;
+
+  //Se saca la query de la peticion
+  const {query} = req;
+
+  //Si existe query.respuesta sera que la peticion viene de un intento anterior, sino la peticion sera nueva y se envia la respuesta vacia
+  const respuesta = query.respuesta || "";
+
+  //Se renderiza la vista de play con el juego para mostrar su pregunta, y una posible respuesta anterior
+  res.render('juegos/play.ejs', {juego, respuesta});
+}
+
+
+//GET /juegos/:juegoId/check
+exports.check = (req, res, next) => {
+
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {juego} = req.load;
+
+  //Se saca la query de la peticion
+  const {query} = req;
+
+  //Si existe query.respuesta sera que la peticion viene de un intento anterior, sino la peticion sera nueva y se envia la respuesta vacia
+  const respuesta = query.respuesta || "";
+
+  //Se comprueba si la respuesta es correcta
+  const resultado = respuesta.toLowerCase().trim() === juego.respuesta.toLowerCase().trim();
+
+  //Se renderiza la vista de result, para mostrar el resultado
+  res.render('juegos/result.ejs', {juego, respuesta, resultado});
+}

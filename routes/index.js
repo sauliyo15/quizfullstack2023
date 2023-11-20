@@ -35,8 +35,8 @@ router.put('/juegos/:juegoId(\\d+)', juegoController.update);
 router.delete('/juegos/:juegoId(\\d+)', juegoController.destroy);
 
 //Instalacion de los MWs para atender a las rutas que permiten jugar con los juegos
-//router.get('/juegos/:juegoId(\\d+)/play', juegoController.play);
-//router.get('/juegos/:juegoId(\\d+)/check', juegoController.check);
+router.get('/juegos/:juegoId(\\d+)/play', juegoController.play);
+router.get('/juegos/:juegoId(\\d+)/check', juegoController.check);
 
 
 //Se define el modulo como exportable ya que se importará en el fichero de app.js entre otros
