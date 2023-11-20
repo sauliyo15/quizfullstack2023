@@ -32,7 +32,7 @@ router.get('/juegos/new', juegoController.new);
 router.post('/juegos', juegoController.create);
 router.get('/juegos/:juegoId(\\d+)/edit', juegoController.edit);
 router.put('/juegos/:juegoId(\\d+)', juegoController.update);
-//router.delete('/juegos/:juegoId(\\d+)', juegoController.destroy);
+router.delete('/juegos/:juegoId(\\d+)', juegoController.destroy);
 
 //Instalacion de los MWs para atender a las rutas que permiten jugar con los juegos
 //router.get('/juegos/:juegoId(\\d+)/play', juegoController.play);

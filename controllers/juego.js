@@ -139,3 +139,20 @@ exports.update = async (req, res, next) => {
     }
   }
 };
+
+
+//DELETE /juegos/:juegoId
+exports.destroy = async (req, res, next) => {
+
+  try {
+    //A través del juego precargado en el metodo load llamamos al metodo destroy para eliminarlo de la base de datos
+    await req.load.juego.destroy();
+
+    //Una vez borrado en la base de datos el juego, se redirige al indice de juegos
+    res.redirect('/juegos');    
+    
+  } catch (error) {
+    //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+    next(error)
+  }
+};
