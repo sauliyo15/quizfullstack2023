@@ -1,0 +1,9 @@
+<h1>Editar Juego</h1>
+<!--Define un formulario y los parametros iniciales de la solicitud HTTP generada al enviarlo que iran en el body
+La accion lleva el parametro oculto _method=PUT indicando que es una solicitud PUT-->
+<form method="post" action="/juegos/<%= juego.id %>?_method=PUT">
+
+    <!--Con la llamada a include se puede incluir en la vista el contenido de otra vista-->
+    <% include _form.ejs %>
+
+</form>

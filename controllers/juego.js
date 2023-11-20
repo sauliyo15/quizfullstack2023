@@ -85,11 +85,22 @@ exports.create = async (req, res, next) => {
     if (error instanceof Sequelize.ValidationError) {
       console.log('Hay errores en el formulario');
       error.errors.forEach(({ message }) => console.log(message));
-      res.render("juegos/new", { juego });
+      res.render("juegos/new.ejs", { juego });
     }
     else {
       //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
       next(error);
     }
   }
+};
+
+
+//GET /juegos/:juegoId/edit
+exports.edit = (req, res, next) => {
+  
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {juego} = req.load;
+
+  //Se llama a la renderizacion de la vista, incluyendo como parametro el juego
+  res.render("juegos/edit.ejs", { juego });
 };
