@@ -7,6 +7,9 @@ const { models } = require("../models");
 //Se importa la funcion del modulo paginacion del directorio helpers que ayudara crear la botonera
 const paginacion = require("../helpers/paginacion").paginate;
 
+//Se define Op de Sequelize que es una abreviatura para hacer mas compactas las expresiones de busqueda
+const Op = Sequelize.Op;
+
 
 /*Autoload el quiz asociado a :juegoId que precarga el juego indentificado en la tabla por el 
 :juegoId de la ruta y lo guarda en req.load.juego de esta forma los controladores que 
@@ -32,9 +35,26 @@ exports.load = async (req, res, next, juegoId) => {
 
 //GET /juegos
 exports.index = async (req, res, next) => {
+
+  //Opciones de busqueda se construyen añadiendo incrementalmente propiedades con opciones (inicialmente objeto vacio)
+  let opciones_busqueda = {};
+
+  //Extraer (si existe el texto de busqueda) de la peticion
+  const busqueda = req.query.busqueda || '';
+
+  //Si campo busqueda contiene algo (hemos introducido algo a buscar en el cajetin)
+  if (busqueda) {
+    //Normalizamos el patron de busqueda con ayuda de expresiones regulares
+    const patron_busqueda = "%" + busqueda.replace(/ +/g,"%") + "%";
+
+    //Se crea la expresion de busqueda
+    opciones_busqueda.where = {pregunta: { [Op.like]: patron_busqueda}};
+  }
+
   try {
     //Para incorporar la paginacion lo primero que se debe saber es el numero total de juegos de la bbdd
-    const numero = await models.Juego.count();
+    //Añadiendo las opciones de busqueda, se cuenta el numero de juegos que casan con el patron de busqueda
+    const numero = await models.Juego.count(opciones_busqueda);
 
     //Definir el numero maximo de juegos por pagina
     const elementos_por_pagina = 5;
@@ -46,18 +66,16 @@ exports.index = async (req, res, next) => {
     variable res.locals.control_paginacion disponible para usar en las vistas*/
     res.locals.control_paginacion = paginacion(numero, elementos_por_pagina, pageno, req.url);
 
-    /*Se establecen las condiciones de busqueda para extraer cada vez 10 elementos (limit) de la base de 
-    datos dependiendo en que pagina estemos (offset)*/
-    const opciones_busqueda = {
-      offset: elementos_por_pagina * (pageno - 1),
-      limit: elementos_por_pagina
-    };
-
+    /*Se incorporan al objeto opciones_busqueda las condiciones de busqueda para extraer cada vez 10 elementos (limit) 
+    de la base de datos dependiendo en que pagina estemos (offset)*/
+    opciones_busqueda.offset = elementos_por_pagina * (pageno - 1);
+    opciones_busqueda.limit =  elementos_por_pagina;
+    
     //Se buscan 'todos' los juegos en la base de datos con las opciones de busqueda de la paginacion
     const juegos = await models.Juego.findAll(opciones_busqueda);
 
-    //Se llama a la renderizacion de la vista, incluyendo como parametro los juegos obtenidos
-    res.render("juegos/index.ejs", { juegos });
+    //Se llama a la renderizacion de la vista, incluyendo como parametro los juegos obtenidos y el texto de busqueda
+    res.render("juegos/index.ejs", { juegos, busqueda });
 
   } catch (error) {
     next(error);

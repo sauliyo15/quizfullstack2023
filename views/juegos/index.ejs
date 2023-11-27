@@ -1,5 +1,13 @@
 <h1>Juegos</h1>
 
+<!--Formulario que incluye un cajetin de busqueda para encontrar juegos-->
+<div class="right">
+    <form action="/juegos" method="get">
+        <input type="text" name="busqueda" value="<%= locals.busqueda || '' %>" placeholder="Busca un juego" autocomplete="off">
+        <input type="submit" value="Buscar">
+    </form>
+</div>
+
 <table>
     <!--Con la variable (array) recibida juegos se itera con codigo javascript incrustado en HTML-->
     <% for (var i in juegos) { %>
