@@ -4,6 +4,9 @@ const { Sequelize } = require("sequelize");
 //Se importa del directorio models el archivo index (nombre principal por defecto)
 const { models } = require("../models");
 
+//Se importa la funcion del modulo paginacion del directorio helpers que ayudara crear la botonera
+const paginacion = require("../helpers/paginacion").paginate;
+
 
 /*Autoload el quiz asociado a :juegoId que precarga el juego indentificado en la tabla por el 
 :juegoId de la ruta y lo guarda en req.load.juego de esta forma los controladores que 
@@ -30,8 +33,28 @@ exports.load = async (req, res, next, juegoId) => {
 //GET /juegos
 exports.index = async (req, res, next) => {
   try {
-    //Se buscan todos los juegos en la base de datos
-    const juegos = await models.Juego.findAll();
+    //Para incorporar la paginacion lo primero que se debe saber es el numero total de juegos de la bbdd
+    const numero = await models.Juego.count();
+
+    //Definir el numero maximo de juegos por pagina
+    const elementos_por_pagina = 5;
+
+    //Se extrae el numero de pagina en el que se encuentra (o 1ª), parametro pageno de la solicitud HTTP
+    const pageno = parseInt(req.query.pageno) || 1;
+
+    /*Se llama a la funcion del modulo paginacion para que elabore la botonera guardando su codigo HTML en la 
+    variable res.locals.control_paginacion disponible para usar en las vistas*/
+    res.locals.control_paginacion = paginacion(numero, elementos_por_pagina, pageno, req.url);
+
+    /*Se establecen las condiciones de busqueda para extraer cada vez 10 elementos (limit) de la base de 
+    datos dependiendo en que pagina estemos (offset)*/
+    const opciones_busqueda = {
+      offset: elementos_por_pagina * (pageno - 1),
+      limit: elementos_por_pagina
+    };
+
+    //Se buscan 'todos' los juegos en la base de datos con las opciones de busqueda de la paginacion
+    const juegos = await models.Juego.findAll(opciones_busqueda);
 
     //Se llama a la renderizacion de la vista, incluyendo como parametro los juegos obtenidos
     res.render("juegos/index.ejs", { juegos });

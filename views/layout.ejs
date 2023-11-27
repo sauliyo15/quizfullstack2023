@@ -48,8 +48,15 @@
       </nav>
 
       <section class="main" id="mainSection">
-          <!--Se hace uso de la variable 'body' que sera el contenido de la vista en particular-->
-          <%- body %>
+          
+        <!--Se hace uso de la variable 'body' que sera el contenido de la vista en particular-->
+        <%- body %>
+
+        <!--Si existe la variable res.locals.control_paginacion, se muestra su contenido que sera el codigo HTML generado-->
+        <% if (locals.control_paginacion) { %>
+          <%- control_paginacion %>
+        <% } %>
+
       </section>
 
       <footer class="main" id="mainFooter">
