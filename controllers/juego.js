@@ -118,17 +118,30 @@ exports.create = async (req, res, next) => {
     //Crea una nueva entrada en la tabla de la base de datos con pregunta y respuesta
     juego = await juego.save({fields: ["pregunta", "respuesta"]});
 
+    //Enviar mensaje flash de juego creado con exito
+    req.flash('exito', 'Juego creado satisfactoriamente');
+
     //Una vez almacenado en la base de datos el juego, se redirige a la visualizacion del mismo
     res.redirect('/juegos/' + juego.id);    
 
   } catch (error) {
     //Si algun cajetin esta vacio se generara un error de validacion
     if (error instanceof Sequelize.ValidationError) {
+
+      //Enviar mensaje flash de error durante la creacion del juego
+      req.flash('error', 'Hay errores en el formulario');
       console.log('Hay errores en el formulario');
-      error.errors.forEach(({ message }) => console.log(message));
+
+      error.errors.forEach(({ message }) => {
+        req.flash('error', message);
+        console.log(message)});
+
       res.render("juegos/new.ejs", { juego });
     }
     else {
+      //Enviar mensaje flash de error durante la creacion del juego
+      req.flash('error', 'Error creando un nuevo juego');
+
       //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
       next(error);
     }
@@ -164,17 +177,30 @@ exports.update = async (req, res, next) => {
     //Guarda los campos pregunta y respuesta 
     await juego.save({fields: ["pregunta", "respuesta"]});
 
+    //Enviar mensaje flash de juego actualizado con exito
+    req.flash('exito', 'Juego actualizado satisfactoriamente');
+
     //Una vez actualizado en la base de datos el juego, se redirige a la visualizacion del mismo
     res.redirect('/juegos/' + juego.id);  
     
   } catch (error) {
     //Si algun cajetin esta vacio se generara un error de validacion
     if (error instanceof Sequelize.ValidationError) {
+
+      //Enviar mensaje flash de error durante la actualizacion del juego
+      req.flash('error', 'Hay errores en el formulario');
       console.log('Hay errores en el formulario');
-      error.errors.forEach(({ message }) => console.log(message));
+      
+      error.errors.forEach(({ message }) => {
+        req.flash('error', message);
+        console.log(message)});
+
       res.render("juegos/edit.ejs", { juego });
     }
     else {
+      //Enviar mensaje flash de error durante la actualizacion del juego
+      req.flash('error', 'Error actualizando un nuevo juego');
+
       //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
       next(error);
     }
@@ -189,10 +215,16 @@ exports.destroy = async (req, res, next) => {
     //A través del juego precargado en el metodo load llamamos al metodo destroy para eliminarlo de la base de datos
     await req.load.juego.destroy();
 
+    //Enviar mensaje flash de juego borrado con exito
+    req.flash('exito', 'Juego borrado satisfactoriamente');
+
     //Una vez borrado en la base de datos el juego, se redirige al indice de juegos
     res.redirect('/juegos');    
     
   } catch (error) {
+    //Enviar mensaje flash de error durante el borrado de un juego
+    req.flash('error', 'Error borrando un nuevo juego');
+
     //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
     next(error)
   }
@@ -230,6 +262,16 @@ exports.check = (req, res, next) => {
 
   //Se comprueba si la respuesta es correcta
   const resultado = respuesta.toLowerCase().trim() === juego.respuesta.toLowerCase().trim();
+
+  //Añadimos mensajes flash en funcion del resultado
+  if (resultado) {
+    //Enviar mensaje flash de juego acertado
+    req.flash('exito', 'Juego acertado');
+  }
+  else {
+    //Enviar mensaje flash de juego no acertado
+    req.flash('error', 'Juego no acertado');
+  }
 
   //Se renderiza la vista de result, para mostrar el resultado
   res.render('juegos/result.ejs', {juego, respuesta, resultado});

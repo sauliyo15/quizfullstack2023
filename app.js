@@ -14,6 +14,12 @@ var partials = require('express-partials');
 //Se importa el modulo para poder simular PUT y DELET en peticiones GET y POST (estas son las unicas que permite HTML)
 var methodOverride = require('method-override');
 
+//Se importa el modulo para poder gestionar sesiones Web de cliente basadas en cookies
+var session = require('express-session');
+
+//Se importa el modulo para permitir el envio de mensajes flash entre transacciones
+var flash = require('express-flash');
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
@@ -49,6 +55,13 @@ app.use(partials());
 
 //Instalacion del MW para poder realizar las solicitudes PUT o DELETE en HTML
 app.use(methodOverride('_method', {methods: ["POST", "GET"]}));
+
+/*Instalacion del MW para el uso de sesiones (secret: semilla de cifrado, resave, saveUnitialized: 
+fuerzan guardar siempre las sesiones aunque no esten inicializadas)*/
+app.use(session({secret: "juegosfull2023", resave: false, saveUninitialized: true}));
+
+//Instalacion del MW para el uso de mensajes flash entre transacciones
+app.use(flash());
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas

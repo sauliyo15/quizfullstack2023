@@ -48,6 +48,42 @@
       </nav>
 
       <section class="main" id="mainSection">
+
+        <!--Se hace uso de las variables que puedan existir en el objeto 'messages' que seran el contenido de los 
+          mensajes flash-->
+        <% if (messages.info) { %>
+          <article id="flashinfo">
+            <h3>Información de interés:</h3>
+            <ul>
+              <% for (var i in messages.info) { %>
+                <li> <%= messages.info[i] %> </li>
+              <% } %>
+            </ul>
+          </article>
+        <% } %>
+
+        <% if (messages.exito) { %>
+          <article id="flashsuccess">
+            <h3>Tarea completada exitosamente:</h3>
+            <ul>
+              <% for (var i in messages.exito) { %>
+                <li> <%= messages.exito[i] %> </li>
+              <% } %>
+            </ul>
+          </article>
+        <% } %>
+
+        <% if (messages.error) { %>
+          <article id="flasherror">
+            <h3>Error:</h3>
+            <ul>
+              <% for (var i in messages.error) { %>
+                <li> <%= messages.error[i] %> </li>
+              <% } %>
+            </ul>
+          </article>
+        <% } %>
+        
           
         <!--Se hace uso de la variable 'body' que sera el contenido de la vista en particular-->
         <%- body %>
