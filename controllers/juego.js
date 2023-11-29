@@ -219,7 +219,7 @@ exports.destroy = async (req, res, next) => {
     req.flash('exito', 'Juego borrado satisfactoriamente');
 
     //Una vez borrado en la base de datos el juego, se redirige al indice de juegos
-    res.redirect('/juegos');    
+    res.redirect('/atras');    
     
   } catch (error) {
     //Enviar mensaje flash de error durante el borrado de un juego

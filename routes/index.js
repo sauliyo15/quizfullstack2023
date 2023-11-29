@@ -8,6 +8,36 @@ var router = express.Router();
 const juegoController = require('../controllers/juego');
 
 
+//Middleware para redirigir a la URL anterior o a la raíz si no hay una URL anterior guardada
+function volverAtras(req, res, next) {
+
+  //Obtiene la URL anterior de la sesión o utiliza "/" por defecto
+  const url = req.session.backURL || "/";
+
+  //Elimina la URL anterior de la sesión para evitar redirecciones múltiples
+  delete req.session.backURL;
+
+  //Redirige al usuario a la URL anterior o a la raíz
+  res.redirect(url); 
+}
+
+// Ruta para activar el middleware redirectBack y redirigir a la URL anterior
+router.get('/atras', volverAtras);
+
+//Middleware para guardar la URL actual en la sesión antes de ciertas rutas
+function guardarUrl(req, res, next) {
+  
+  //Guarda la URL actual en la sesión para futuras redirecciones
+  req.session.backURL = req.url; 
+
+  //Continua con el siguiente middleware o controlador de ruta
+  next(); 
+}
+
+//Rutas que activan el middleware saveBack para guardar la URL antes de estas rutas
+router.get(['/', '/autor', '/juegos'], guardarUrl);
+
+
 //Instalacion de MWs router que atienden a las rutas indicadas: /
 router.get('/', function(req, res, next) {
 
