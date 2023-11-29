@@ -20,12 +20,18 @@ var session = require('express-session');
 //Se importa el modulo para permitir el envio de mensajes flash entre transacciones
 var flash = require('express-flash');
 
+//Se importa el modulo para configurar la gestion de sesiones de la tabla Sesiones
+var SequelizeStore = require('connect-session-sequelize')(session.Store);
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
 
+//Importar el acceso a la base de datos
+var sequelize = require('./models');
 
-//Crea al aplicacion express
+
+//Crea la aplicacion express
 var app = express();
 
 
@@ -56,9 +62,16 @@ app.use(partials());
 //Instalacion del MW para poder realizar las solicitudes PUT o DELETE en HTML
 app.use(methodOverride('_method', {methods: ["POST", "GET"]}));
 
-/*Instalacion del MW para el uso de sesiones (secret: semilla de cifrado, resave, saveUnitialized: 
-fuerzan guardar siempre las sesiones aunque no esten inicializadas)*/
-app.use(session({secret: "juegosfull2023", resave: false, saveUninitialized: true}));
+//Definimos como sera el almacen de las sesiones
+var sessionStore = new SequelizeStore({
+  db: sequelize, //Base de datos a utilizar la que utilizar sequelize al importar models
+  table: "Session", //Tabla a utilizar
+  checkExpirationInterval: 15 * 60 * 1000, //Chequear cada 15 minutos (en milisegundos)
+  expiration: 4 * 60 * 60 * 1000 //La sesion expira cada 4 horas (en milisegundos)
+});
+
+//Instalacion de MW para manejar las sesiones y los mensajes flash. Indicamos que se va a almacenar con sessionStore
+app.use(session({secret: "juegosfull2023", store: sessionStore, resave: false, saveUninitialized: true})); //secret: semilla de cifrado de la cookie, resave, saveUnitialized: fuerzan guardar siempre sesiones aunque no esten inicializadas
 
 //Instalacion del MW para el uso de mensajes flash entre transacciones
 app.use(flash());
