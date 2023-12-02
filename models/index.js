@@ -14,10 +14,13 @@ const sequelize = new Sequelize(url);
 //OJO! IMPORTANTE el metodo import no funciona a partir de la version 6 de sequelize/sequelize-cli
 
 //Se importa el modelo Juego desde el archivo 'juego' en el mismo directorio que este script
-const Juego = sequelize.import(path.join(__dirname, 'juego'));
+sequelize.import(path.join(__dirname, 'juego'));
 
 //Se importa el modelo sesion desde el archivo 'sesion' en el mismo directorio que este script
 sequelize.import(path.join(__dirname, 'sesion'));
+
+//Se importa el modelo Usuario desde el archivo 'usuario' en el mismo directorio que este script
+sequelize.import(path.join(__dirname, 'usuario'));
 
 
 //Se exporta la instancia de Sequelize configurada para ser utilizada en otras partes de la aplicación
