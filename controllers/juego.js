@@ -11,7 +11,7 @@ const paginacion = require("../helpers/paginacion").paginate;
 const Op = Sequelize.Op;
 
 
-/*Autoload el quiz asociado a :juegoId que precarga el juego indentificado en la tabla por el 
+/*Autoload el juego asociado a :juegoId que precarga el juego indentificado en la tabla por el 
 :juegoId de la ruta y lo guarda en req.load.juego de esta forma los controladores que 
 tambien utilizan :juegoId pueden utilizarlo sin necesidad de cargarlo nuevamente*/
 exports.load = async (req, res, next, juegoId) => {
