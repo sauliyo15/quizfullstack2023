@@ -7,6 +7,9 @@ var router = express.Router();
 //Importar el controlador del recurso Juegos para acceder a sus métodos (MWs)
 const juegoController = require('../controllers/juego');
 
+//Importar el controlador del recurso Usuarios para acceder a sus métodos (MWs)
+const usuarioController = require('../controllers/usuario');
+
 
 //Middleware para redirigir a la URL anterior o a la raíz si no hay una URL anterior guardada
 function volverAtras(req, res, next) {
@@ -35,7 +38,7 @@ function guardarUrl(req, res, next) {
 }
 
 //Rutas que activan el middleware saveBack para guardar la URL antes de estas rutas
-router.get(['/', '/autor', '/juegos'], guardarUrl);
+router.get(['/', '/autor', '/juegos', '/usuarios'], guardarUrl);
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas: /
@@ -67,6 +70,18 @@ router.delete('/juegos/:juegoId(\\d+)', juegoController.destroy);
 //Instalacion de los MWs para atender a las rutas que permiten jugar con los juegos
 router.get('/juegos/:juegoId(\\d+)/play', juegoController.play);
 router.get('/juegos/:juegoId(\\d+)/check', juegoController.check);
+
+//Instalacion de la funcion usuarioController.load de autoload de usuarios
+router.param('usuarioId', usuarioController.load);
+
+//Instalacion de MWs router que atienden a las rutas relacionadas con el interfaz CRUD de los Usuarios
+router.get('/usuarios', usuarioController.index);
+router.get('/usuarios/:usuarioId(\\d+)', usuarioController.show);
+router.get('/usuarios/new', usuarioController.new);
+router.post('/usuarios', usuarioController.create);
+router.get('/usuarios/:usuarioId(\\d+)/edit', usuarioController.edit);
+router.put('/usuarios/:usuarioId(\\d+)', usuarioController.update);
+router.delete('/usuarios/:usuarioId(\\d+)', usuarioController.destroy);
 
 
 //Se define el modulo como exportable ya que se importará en el fichero de app.js entre otros
