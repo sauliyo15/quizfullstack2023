@@ -40,6 +40,24 @@ module.exports = {
         respuesta: 'Berlín',
         createdAt: new Date(),
         updatedAt: new Date()
+      },
+      {
+        pregunta: 'Capital de Ucrania',
+        respuesta: 'Kiev',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        pregunta: 'Capital de Rumanía',
+        respuesta: 'Bucarest',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        pregunta: 'Capital de Hungría',
+        respuesta: 'Budapest',
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ]);
   },
