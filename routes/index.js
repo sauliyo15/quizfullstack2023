@@ -76,8 +76,8 @@ router.param('usuarioId', usuarioController.load);
 
 //Instalacion de MWs router que atienden a las rutas relacionadas con el interfaz CRUD de los Usuarios
 router.get('/usuarios', usuarioController.index);
-/*router.get('/usuarios/:usuarioId(\\d+)', usuarioController.show);
-router.get('/usuarios/new', usuarioController.new);
+router.get('/usuarios/:usuarioId(\\d+)', usuarioController.show);
+/*router.get('/usuarios/new', usuarioController.new);
 router.post('/usuarios', usuarioController.create);
 router.get('/usuarios/:usuarioId(\\d+)/edit', usuarioController.edit);
 router.put('/usuarios/:usuarioId(\\d+)', usuarioController.update);

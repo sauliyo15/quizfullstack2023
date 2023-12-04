@@ -1,0 +1,17 @@
+<h1>Ver Usuario</h1>
+
+<ul>
+    <!--Con la variable recibida usuario se muestran sus datos-->
+    <li>Nombre de usuario: <b><%= usuario.displayNombre %></b></li>
+    <li>Administrador: <b><%= usuario.esAdministrador ? "Sí" : "No" %></b></li>
+</ul>
+
+<p>
+    <!--Dos botones para editar o borrar el usuario-->
+    <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+    <a href="/usuarios/<%= usuario.id %>?_method=DELETE"
+        onclick="return confirm('¿Borrar usuario <%= usuario.displayNombre %>?');"
+         class="button">Borrar</a>
+</p>
+
+<a href="/atras" class="button">Atrás</a>

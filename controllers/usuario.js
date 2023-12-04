@@ -67,3 +67,14 @@ exports.index = async (req, res, next) => {
     next(error);
   }
 };
+
+
+//GET /usuarios/:usuarioId
+exports.show = (req, res, next) => {
+  
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {usuario} = req.load;
+
+  //Se llama a la renderizacion de la vista, incluyendo como parametro el usuario
+  res.render("usuarios/show.ejs", { usuario });
+};
