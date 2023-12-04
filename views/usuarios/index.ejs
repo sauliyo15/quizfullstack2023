@@ -1,0 +1,26 @@
+<h1>Usuarios</h1>
+
+<table>
+    <!--Con la variable (array) recibida usuarios se itera con codigo javascript incrustado en HTML-->
+    <% for (var i in usuarios) { %>
+        <% var usuario = usuarios[i]; %>
+        <tr>
+            <td>
+                <a href="/usuarios/<%= usuario.id %>/"><%= usuario.displayNombre %></a>
+                <%= usuario.esAdministrador ? "(administrador)" : "" %>
+            </td>
+            <td>
+                <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+            </td>
+            <td>
+                <a href="/usuarios/<%= usuario.id %>?_method=DELETE"
+                     onclick="return confirm('¿Borrar usuario <%= usuario.displayNombre %>?');"
+                      class="button">Borrar</a>
+            </td>
+        </tr>
+    <% } %>
+    
+    
+</table>
+
+<a href="/usuarios/new" class="button">Añadir Usuario</a>

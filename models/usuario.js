@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         //Método de instancia para mostrar un nombre formateado
-        getDisplayNombre() {
+        get displayNombre() {
             // Verifica si el tipo de cuenta está presente y formatea el nombre en consecuencia
             if (!this.tipoDeCuentaId) {
                 // Si no hay un tipo de cuenta, devuelve el nombre y el primer tipo de cuenta en el array
