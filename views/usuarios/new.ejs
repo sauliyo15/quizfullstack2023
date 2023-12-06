@@ -1,0 +1,12 @@
+<h1>Añadir Usuario</h1>
+
+<!--Define un formulario y los parametros iniciales de la solicitud HTTP generada al enviarlo que iran en el body-->
+<form method="post" action="/usuarios">
+
+    <!--Con la llamada a include se puede incluir en la vista el contenido de otra vista-->
+    <% include _form.ejs %>
+
+    <!--En este caso incluimos aquí el boton submit que realizará tres validaciones (en edit solo se hará una)-->
+    <input type="submit" value="Save" onclick="return forceNombre() && forcePassword() && validPassword()">
+
+</form>

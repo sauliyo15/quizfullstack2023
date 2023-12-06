@@ -78,3 +78,14 @@ exports.show = (req, res, next) => {
   //Se llama a la renderizacion de la vista, incluyendo como parametro el usuario
   res.render("usuarios/show.ejs", { usuario });
 };
+
+
+//GET /usuarios/new
+exports.new = (req, res, next) => {
+  
+  //Creamos un objeto con strings vacios para que se represente así en el formulario de la vista
+  const usuario = {nombre: "", clave: ""};
+
+  //Se llama a la renderizacion de la vista, incluyendo como parametro el usuario
+  res.render("usuarios/new.ejs", { usuario });
+};

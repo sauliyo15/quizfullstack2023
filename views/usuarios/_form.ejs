@@ -1,0 +1,76 @@
+<!--Tres funciones validadoras-->
+<script>
+
+    function forceNombre() {
+        var nombre = document.getElementById('username').value;
+
+        if (!nombre) {
+            alert('Se deben completar el Nombre de Usuario.');
+            return false;
+        }
+        return true;
+    }
+
+    
+    function forcePassword() {
+        var pw1 = document.getElementById('password').value;
+        var pw2 = document.getElementById('confirm_password').value;
+
+        if (!pw1 || !pw2) {
+            alert('Se deben completar los campos de Contraseña y Confirmación.');
+            return false;
+        }
+        return true;
+    }
+
+    
+    function validPassword() {
+        var pw1 = document.getElementById('password').value;
+        var pw2 = document.getElementById('confirm_password').value;
+
+        if (pw1 !== pw2) {alert('Los campos de contraseña y confirmación no coinciden.'); return false;}
+        if (pw1 && pw1.length < 8) {alert('La contraseña debe tener al menos 8 caracteres.'); return false;}
+        if (pw1 && !/\d/.test(pw1)) {alert('La contraseña debe contener al menos 1 número.'); return false;}
+        if (pw1 && !/[A-Z]/.test(pw1)) {alert('La contraseña debe contener al menos 1 letra mayúscula.'); return false;}
+
+        return true;
+    }
+</script>
+
+<ul>
+    <li>
+        <!--Si usuario.id es false es el formulario new-->
+        <% if (!usuario.id) { %>
+            <label for="preg" class="rem">Nombre de usuario:</label>
+            <input type="text" id="username" name="nombre" value="<%= usuario.nombre %>" autocomplete="off"/>
+        <% } 
+        <!--Sino es el formulario edit-->
+        else { %>
+            Nombre de usuario: <%= usuario.nombre %>
+        <% } %>
+    </li>
+    <li>
+        <!--Si usuario.id es false es el formulario new-->
+        <% if (!usuario.id) { %>
+            <span class="text-danger">Introduce la contraseña dos veces</span>
+        <% }
+        <!--Sino es el formulario edit--> 
+        else { %>
+            <span class="text-danger">Déjalo en blanco para no cambiar la contraseña actual</span>
+        <% } %>
+        <ul>
+            <li>
+                <label for="password" class="rem">Contraseña:</label>
+                <input type="password" id="password" name="clave" autocomplete="off"/>
+            </li>
+            <li>
+                <label for="confirm_password" class="rem">Confirmar contraseña:</label>
+                <input type="password" id="confirm_password" autocomplete="off"/>
+            </li>
+        </ul>     
+    </li>
+</ul>
+
+<div>
+    <a href="/atras" class="button">Cancelar</a>
+</div>
