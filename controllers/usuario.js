@@ -89,3 +89,67 @@ exports.new = (req, res, next) => {
   //Se llama a la renderizacion de la vista, incluyendo como parametro el usuario
   res.render("usuarios/new.ejs", { usuario });
 };
+
+
+//POST /usuarios
+exports.create = async (req, res, next) => {
+
+  //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
+  const {nombre, clave} = req.body;
+
+  //Crea un objeto compatible con la tabla usuarios
+  let usuario = models.Usuario.build({nombre, clave});
+
+  //Aunque la validacion de contraseña vacia la hemos hecho también en la vista conviene verificarlo tambien en el controlador
+  if (!clave) {
+    //Enviar mensaje flash de error de contraseña vacia
+    req.flash('error', 'La contraseña no puede estar vacía');
+
+    //Se llama a la renderizacion de la vista, incluyendo como parametro el usuario
+    return res.render("usuarios/new.ejs", { usuario });
+  }
+
+  try {
+    //Crea una nueva entrada en la tabla de la base de datos con nombre, clave y salt
+    usuario = await usuario.save({fields: ["nombre", "clave", "salt"]});
+
+    //Enviar mensaje flash de usuario creado con exito
+    req.flash('exito', 'Usuario creado satisfactoriamente');
+
+    //Una vez almacenado en la base de datos el usuario, se redirige a la visualizacion del mismo
+    res.redirect('/usuarios/' + usuario.id);    
+
+  } catch (error) {
+    //Validacion de campos unicos (en este caso el unico es el nombre)
+    if (error instanceof Sequelize.UniqueConstraintError) {
+
+      //Enviar mensaje flash de error de usuario que ya existe
+      req.flash('error', `El usuario con nombre "${nombre}" ya existe.`);
+
+      //Se renderiza de nuevo a la vista new
+      res.render("usuarios/new.ejs", { usuario });
+    }
+    else {
+      //Si algun cajetin esta vacio se generara un error de validacion
+      if (error instanceof Sequelize.ValidationError) {
+
+        //Enviar mensaje flash de error durante la creacion del usuario
+        req.flash('error', 'Hay errores en el formulario');
+        console.log('Hay errores en el formulario');
+
+        error.errors.forEach(({ message }) => {
+          req.flash('error', message);
+          console.log(message)});
+  
+        res.render("usuarios/new.ejs", { usuario });
+      }
+      else {
+        //Enviar mensaje flash de error durante la creacion del usuario
+        req.flash('error', 'Error creando un nuevo usuario');
+        
+        //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+        next(error);
+      }
+    }
+  }
+};
