@@ -79,8 +79,8 @@ router.get('/usuarios', usuarioController.index);
 router.get('/usuarios/:usuarioId(\\d+)', usuarioController.show);
 router.get('/usuarios/new', usuarioController.new);
 router.post('/usuarios', usuarioController.create);
-/*router.get('/usuarios/:usuarioId(\\d+)/edit', usuarioController.edit);
-router.put('/usuarios/:usuarioId(\\d+)', usuarioController.update);
+router.get('/usuarios/:usuarioId(\\d+)/edit', usuarioController.edit);
+/*router.put('/usuarios/:usuarioId(\\d+)', usuarioController.update);
 router.delete('/usuarios/:usuarioId(\\d+)', usuarioController.destroy);*/
 
 

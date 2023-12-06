@@ -1,0 +1,12 @@
+<h1>Editar Usuario</h1>
+<!--Define un formulario y los parametros iniciales de la solicitud HTTP generada al enviarlo que iran en el body
+La accion lleva el parametro oculto _method=PUT indicando que es una solicitud PUT-->
+<form method="post" action="/usuarios/<%= usuario.id %>?_method=PUT">
+
+    <!--Con la llamada a include se puede incluir en la vista el contenido de otra vista-->
+    <% include _form.ejs %>
+
+    <!--En este caso incluimos aquí el boton submit que realizará una validacion (en new se haran tres)-->
+    <input type="submit" value="Guardar" onclick="return validPassword()">
+
+</form>
