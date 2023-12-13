@@ -219,3 +219,26 @@ exports.update = async (req, res, next) => {
     }
   }
 };
+
+
+//DELETE /usuarios/:usuarioId
+exports.destroy = async (req, res, next) => {
+
+  try {
+    //A través del usuario precargado en el metodo load llamamos al metodo destroy para eliminarlo de la base de datos
+    await req.load.usuario.destroy();
+
+    //Enviar mensaje flash de usuario borrado con exito
+    req.flash('exito', 'Usuario borrado satisfactoriamente');
+
+    //Una vez borrado en la base de datos el usuario, se redirige al indice de usuarios
+    res.redirect('/atras');    
+    
+  } catch (error) {
+    //Enviar mensaje flash de error durante el borrado de un usuario
+    req.flash('error', 'Error borrando un nuevo usuario');
+
+    //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+    next(error)
+  }
+};
