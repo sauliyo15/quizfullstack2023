@@ -164,3 +164,58 @@ exports.edit = (req, res, next) => {
   //Se llama a la renderizacion de la vista, incluyendo como parametro el usuario
   res.render("usuarios/edit.ejs", { usuario });
 };
+
+
+//PUT /usuarios/:usuarioId
+exports.update = async (req, res, next) => {
+
+  //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
+  const {clave} = req.body;
+  
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {usuario} = req.load;
+
+  //Variable que contendra los campos del usuario a actualizar
+  let campos_actualizar = [];
+
+  //Si el password o clave han cambiado (se introdujo contenido valido en los cajetines), la variable req.body.clave existira
+  if (clave) {
+    //Se preparan los campos para actualizar (solo se podrá cambiar la clave o contraseña)
+    usuario.clave = clave;
+    campos_actualizar.push('salt');
+    campos_actualizar.push('clave');
+  }
+
+  try {
+    //Guarda los campos si ha habido cambios en la clave o no.
+    await usuario.save({fields: campos_actualizar});
+
+    //Enviar mensaje flash de usuario actualizado con exito
+    req.flash('exito', 'Usuario actualizado satisfactoriamente');
+
+    //Una vez actualizado en la base de datos el usario, se redirige a la visualizacion del mismo
+    res.redirect('/usuarios/' + usuario.id);  
+    
+  } catch (error) {
+    //Si algun cajetin esta vacio se generara un error de validacion
+    if (error instanceof Sequelize.ValidationError) {
+
+      //Enviar mensaje flash de error durante la actualizacion del usuario
+      req.flash('error', 'Hay errores en el formulario');
+      console.log('Hay errores en el formulario');
+      
+      error.errors.forEach(({ message }) => {
+        req.flash('error', message);
+        console.log(message)});
+
+      res.render("usuarios/edit.ejs", { usuario });
+    }
+    else {
+      //Enviar mensaje flash de error durante la actualizacion del usuario
+      req.flash('error', 'Error actualizando un usuario');
+
+      //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+      next(error);
+    }
+  }
+};
