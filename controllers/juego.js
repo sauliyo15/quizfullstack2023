@@ -276,3 +276,105 @@ exports.check = (req, res, next) => {
   //Se renderiza la vista de result, para mostrar el resultado
   res.render('juegos/result.ejs', {juego, respuesta, resultado});
 }
+
+
+//GET /juegos/randomplay
+exports.randomPlay = async (req, res, next) => {
+  try {
+
+    //Obtenemos el parametro de la sesion (si es la primera vez no existira y sera el array vacio) de identificadores de juegos ya jugados
+    req.session.randomPlayResueltos = req.session.randomPlayResueltos || [];
+
+    //Obtenemos el numero de juegos que existen en la base de datos
+    const total = await models.Juego.count();
+
+    //Con el total y la longitud del array obtenido, sabremos cuantos juegos hay pendientes
+    const quedan = total - req.session.randomPlayResueltos.length;
+
+    //La puntuacion sera la longitud del array/parametro obtenido de la sesion (de juegos ya jugados y acertados)
+    puntuacion = req.session.randomPlayResueltos.length;
+
+    //Si todavía quedan juegos por resolver...
+    if (!quedan == 0) {
+
+      let juego = null;
+
+      //Comprobamos si existe la propiedad (ultimojuego)
+      if (req.session.ramdomPlayUltimoJuegoId) {
+
+        //Si existe cargamos ese juego
+        juego = await models.Juego.findOne({
+          where: {'id': req.session.ramdomPlayUltimoJuegoId}
+        });
+      }
+      //Sino...cargamos un juego totalmente aleatorio de los que quedan
+      else {
+        juego = await models.Juego.findOne({
+          where: {'id': {[Sequelize.Op.notIn]: req.session.randomPlayResueltos}},
+          offset: Math.floor(Math.random() * quedan) 
+        });
+      }
+
+      //Asignamos a la propiedad de la sesion 'ultimojuegoid', el id del juego cargado
+      req.session.ramdomPlayUltimoJuegoId = juego.id;
+      
+      //Renderizamos la vista con el juego y la puntuacion
+      res.render("juegos/random_play.ejs", { juego, puntuacion});
+    }
+    //Sino quedan Quizzes por resolver...
+    else {
+      //Se borra la propiedad/array por si se vuelve a empezar que se genere de nuevo
+      delete req.session.randomPlayResueltos;
+
+      //Se renderiza la vista correspondiente
+      res.render("juegos/random_nomore.ejs", {puntuacion});
+    }
+
+  } catch (error) {
+    //Configuramos un mensaje flash para mostrarlo en la vista con el resultado fracasado de la operacion
+    req.flash('error', 'Accediendo a Randomplay: ' + error.message);
+    next(error);
+  }
+}
+
+
+//GET /juegos/randomcheck/:juegoId(\\d+)
+exports.randomCheck = async (req, res, next) => {
+
+  //Borramos la propiedad ultimojuegoId, ya que cuando el usuario comprueba un juego, deja de tener sentido
+  delete req.session.ramdomPlayUltimoJuegoId;
+
+  //Obtenemos la información del query
+  const { query } = req;
+
+  //Si hay algun contenido obtenemos el parametro oculto answer que genera el boton Prueba otra vez
+  const respuesta = query.respuesta || "";
+
+  //Cargamos el juego ya que esta primitiva contiene el juegoId y se habra cargado con el metodo load
+  const { juego } = req.load;
+
+  //Se comprueba si la respuesta es correcta
+  const resultado = respuesta.toLowerCase().trim() === juego.respuesta.toLowerCase().trim();
+
+  //Obtenemos la puntuacion a partir de la longitud del array de juegos resueltos
+  let puntuacion = req.session.randomPlayResueltos.length;
+
+  //Si la respuesta es correcta...
+  if (resultado) {
+
+    //Se añade el id del quiz al array de resueltos
+    req.session.randomPlayResueltos.push(juego.id);
+
+    //Incrementamos la puntuacion
+    puntuacion++;
+  }
+  //Si la respuesta es incorrecta...
+  else {
+  
+    //Se borra la propiedad/array por si se vuelve a empezar que se genere de nuevo
+    delete req.session.randomPlayResueltos;
+  }
+
+  //Renderizamoa a la vista correspondiente con los parametros requeridos
+  res.render("juegos/random_result.ejs", { puntuacion, resultado, respuesta });
+}

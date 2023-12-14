@@ -70,6 +70,8 @@ router.delete('/juegos/:juegoId(\\d+)', juegoController.destroy);
 //Instalacion de los MWs para atender a las rutas que permiten jugar con los juegos
 router.get('/juegos/:juegoId(\\d+)/play', juegoController.play);
 router.get('/juegos/:juegoId(\\d+)/check', juegoController.check);
+router.get('/juegos/randomplay', juegoController.randomPlay);
+router.get('/juegos/randomcheck/:juegoId(\\d+)', juegoController.randomCheck);
 
 //Instalacion de la funcion usuarioController.load de autoload de usuarios
 router.param('usuarioId', usuarioController.load);

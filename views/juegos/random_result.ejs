@@ -1,0 +1,21 @@
+<h1>Juego aleatorio:</h1>
+
+<p>Respuestas correctas: <span id="score"><%= puntuacion %></span></p>
+
+<p>
+  La respuesta <strong> <%= respuesta %> </strong> es <%= resultado ? 'correcta'
+  : 'erronea' %>.
+</p>
+
+<% if (!resultado) { %>
+<p>Has fallado.</p>
+<p>
+  <a href="/atras" class="button">Fin del juego</a>
+</p>
+
+<% } else { %>
+<p>Juego exitoso.</p>
+<p>
+  <a href="/juegos/randomplay" class="button">Continua jugando</a>
+</p>
+<% } %>

@@ -1,0 +1,20 @@
+<h1>Juego aleatorio:</h1>
+
+<div>Respuestas correctas: <span id="score"><%= puntuacion %></span></div>
+
+<form method="get" action="/juegos/randomcheck/<%= juego.id %>">
+  <p>Pregunta: <b><%= juego.pregunta %></b></p>
+
+  <div class="wideRow">
+    <input
+      type="text"
+      class="itemWide"
+      id="answer"
+      name="respuesta"
+      value=""
+      placeholder="Respuesta"
+      autocomplete="off"
+    />
+    <input type="submit" class="itemNarrow" id="send" value="Comprobar" />
+  </div>
+</form>
