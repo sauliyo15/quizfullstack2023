@@ -23,6 +23,9 @@ var flash = require('express-flash');
 //Se importa el modulo para configurar la gestion de sesiones de la tabla Sesiones
 var SequelizeStore = require('connect-session-sequelize')(session.Store);
 
+//Se importa el modulo para la gestion de autenticacion de usarios.
+const passport = require('passport');
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
@@ -75,6 +78,23 @@ app.use(session({secret: "juegosfull2023", store: sessionStore, resave: false, s
 
 //Instalacion del MW para el uso de mensajes flash entre transacciones
 app.use(flash());
+
+//Inicializa passport y define 'usuarioLogueado' como la propiedad de req que contiene al usuario autenticado si existe
+app.use(passport.initialize({ userProperty: 'usuarioLogueado'}));
+
+//Conecta la sesion de login con la de cliente
+app.use(passport.session());
+
+//Instalacion del MW para gestionar la informacion del usuario logueado y hacerla visible en todas las vistas
+app.use(function(req, res, next) {
+  //Se copia la informacion desde la peticion a la respuesta
+  res.locals.usuarioLogueado = req.usuarioLogueado && {
+    id: req.usuarioLogueado.id,
+    displayNombre: req.usuarioLogueado.displayNombre,
+    esAdministrador: req.usuarioLogueado.esAdministrador
+  };
+  next();
+});
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas
