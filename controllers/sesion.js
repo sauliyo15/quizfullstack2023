@@ -5,62 +5,99 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 //Se importa del directorio models el archivo index (nombre principal por defecto)
-const { models } = require("../models");
+const {models} = require("../models");
 
-//Tiempo maximo para que expire la sesion sino se utiliza (en milisegundos)
+//5 minutos en milisegundos
 const tiempoExpiracion = 5*60*1000;
 
 
-// /* (Se comprueba en cualquier solicitud)
+//Chequear el tiempo de inactividad, si excede la sesion se destruye sino se actualiza el tiempo de sesion
 exports.checkLoginExpires = (req, res, next) => {
 
-    //Si comprueba existe una sesion de usuario iniciada...
+    //Si existe una sesion de usuario iniciada...
     if (req.session.loginExpirado) { 
 
-        //Si comprueba si ha expirado la sesion
+        //Si ha expirado la sesion
         if (req.session.loginExpirado < Date.now()) {
 
             //Se borra la propiedad
             delete req.session.loginExpirado;
 
-            //Se indica a passport que cierre la sesion
-            req.logout(); 
+            //Se indica a passport que cierre la sesion //OJO desde la version 0.6 de passport se necesita un callback de esta manera
+            req.logout(function(err) {if (err) { return next(err); }});
 
-            //Tambien se borra la propiedad de usuarioLogueado que estaba disponible en las vistas
+            //Tambien se borra la propiedad usuarioLogueado
             delete res.locals.usuarioLogueado;
 
             //Se programa un mensaje flash
-            req.flash('info', 'La sesión de usuario ha expirado.');
+            req.flash('info', 'La sesión de usuario ha expirado');
         } 
         //La sesion todavia no ha expirado, se reprograma el tiempo de expiracion
         else { 
             req.session.loginExpirado = Date.now() + tiempoExpiracion;
         }
     }
-    //Se continua con la peticion para que la atienda el MW que corresponda
+    //Se continua con la peticion
     next();
 };
 
 
-//GET /loguear/
-exports.new = (req, res, next) => {
-    
-    //Se llama a la renderizacion de la vista
-    res.render("sesion/new.ejs");
-  };
+//GET /loguear
+exports.new = async (req, res, next) => {
+    //Se renderiza a la nueva vista con el formulario de login
+    res.render('sesion/new.ejs');
+}
+
+
+//POST /loguear
+exports.create = passport.authenticate(
+    'local',
+    {
+        //Redireccion en caso de fallo
+        failureRedirect:'/loguear',
+
+        //Mensaje de exito, login correcto
+        successFlash: 'Bienvenido, inicio de sesión correcto.',
+        
+        //Mensaje de fallo, login incorrecto
+        failureFlash: 'El inicio de sesión ha fallado, prueba otra vez.' 
+    }
+);
+
+exports.createLoginExpires = async (req, res, next) => {
+    //Guarda el instante de tiempo en el que expira la sesion momento actual + 5 minutos
+    req.session.loginExpires = Date.now() + tiempoExpiracion;
+
+    //Redirecciona a la ruta que contenga goback
+    res.redirect("/atras");
+}
+
+
+//DELETE /loguear
+exports.destroy = async (req, res, next) => {
+    //Borramos la propiedad
+    delete req.session.loginExpirado;
+
+    //Se indica a passport que cierre la sesion //OJO desde la version 0.6 de passport se necesita un callback de esta manera
+    req.logout(function(err) {if (err) { return next(err); }});
+
+    //Redirecciona a la ruta que contenga goback
+    res.redirect("/atras"); 
+}
 
 
 //serializeUser(..) guarda en la sesión el id del usuario logueado para recuperarlo en la próxima petición HTTP.
-passport.serializeUser((usuario, done) => {
-    done(null, usuario.id);
+passport.serializeUser((user, done) => {
+    done(null, user.id);
 });
 
 
 //deserializeUser(..) recupera el registro del usuario logueado a partir del id de la sesión.
 passport.deserializeUser(async (id, done) => {
+
     try {
-        const usuario = await models.Usuario.findByPk(id);
-        done(null, usuario);
+        const user = await models.Usuario.findByPk(id);
+        done(null, user);
     } catch (error) {
         done(error);
     }
@@ -79,13 +116,17 @@ passport.use(new LocalStrategy(
     async (nombre, clave, done) => {
 
         try {
+            //Obtenemos el usuario de la base de datos por su nombre
             const usuario = await models.Usuario.findOne({where: {nombre}});
-            //Verificacion del login
+            
+            //Si existe y la verificacion de la clave es correcta
             if (usuario && usuario.verificarClave(clave)) {
+                //Es ok
                 done(null, usuario);
             }
             //Login incorrecto
             else {
+                //No es ok
                 done(null, false);
             }
         } catch (error) {
@@ -93,3 +134,14 @@ passport.use(new LocalStrategy(
         }
     }
 ));
+
+
+
+
+
+
+
+
+
+
+
