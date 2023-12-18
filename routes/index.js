@@ -19,8 +19,8 @@ router.all('*', sesionController.checkLoginExpires);
 
 //Instalacion de MWs router que atienden a las rutas relacionadas con la autenticacion (login) de los usuarios
 router.get('/loguear', sesionController.new);
-router.post('/loguear', sesionController.create, sesionController.createLoginExpires);
-router.delete('/loguear', sesionController.destroy);
+//router.post('/loguear', sesionController.create, sesionController.createLoginExpires);
+//router.delete('/loguear', sesionController.destroy);
 
 
 //Middleware para redirigir a la URL anterior o a la raíz si no hay una URL anterior guardada

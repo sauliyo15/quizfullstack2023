@@ -42,6 +42,14 @@ exports.checkLoginExpires = (req, res, next) => {
 };
 
 
+//GET /loguear/
+exports.new = (req, res, next) => {
+    
+    //Se llama a la renderizacion de la vista
+    res.render("sesion/new.ejs");
+  };
+
+
 //serializeUser(..) guarda en la sesión el id del usuario logueado para recuperarlo en la próxima petición HTTP.
 passport.serializeUser((usuario, done) => {
     done(null, usuario.id);
