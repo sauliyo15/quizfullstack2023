@@ -48,7 +48,7 @@
           <!--Sino se muestra la informacion del usuario logueado y dos enlaces para ver su perfil y cerrar sesion-->
           else { %>
             <!--Muestra al usuario autenticado con su displayNombre para que muestre si la cuenta es local o externa-->
-            <a href="/usuarios/<% usuarioLogueado.id %>"><% usuarioLogueado.displayNombre %></a>
+            <a href="/usuarios/<%= usuarioLogueado.id %>"><% usuarioLogueado.displayNombre %></a>
             <!--Boton de destruir la sesion-->
             <a href="/loguear?_method=DELETE">Cerrar Sesión</a>
           <% } %>

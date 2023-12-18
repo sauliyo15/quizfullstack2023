@@ -10,6 +10,18 @@ const juegoController = require('../controllers/juego');
 //Importar el controlador del recurso Usuarios para acceder a sus métodos (MWs)
 const usuarioController = require('../controllers/usuario');
 
+//Importar el controlador del recurso Sesion para acceder a sus métodos (MWs)
+const sesionController = require('../controllers/sesion');
+
+
+//Actualiza la expiracion de la sesion al ocurrir una primitiva o la destruye si ha expirado
+router.all('*', sesionController.checkLoginExpires);
+
+//Instalacion de MWs router que atienden a las rutas relacionadas con la autenticacion (login) de los usuarios
+router.get('/loguear', sesionController.new);
+router.post('/loguear', sesionController.create, sesionController.createLoginExpires);
+router.delete('/loguear', sesionController.destroy);
+
 
 //Middleware para redirigir a la URL anterior o a la raíz si no hay una URL anterior guardada
 function volverAtras(req, res, next) {
