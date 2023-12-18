@@ -116,8 +116,15 @@ exports.create = async (req, res, next) => {
     //Enviar mensaje flash de usuario creado con exito
     req.flash('exito', 'Usuario creado satisfactoriamente');
 
-    //Una vez almacenado en la base de datos el usuario, se redirige a la visualizacion del mismo
-    res.redirect('/usuarios/' + usuario.id);    
+    //Si el usuario esta logueado...
+    if (req.usuarioLogueado) {
+      //Se redirecciona para mostrar los datos del usuario recien creado
+      res.redirect('/usuarios/' + usuario.id);   
+    }
+    else {
+      //Sino se redirecciona a la pagina de inicio de sesion
+      res.redirect('/loguear');   
+    }     
 
   } catch (error) {
     //Validacion de campos unicos (en este caso el unico es el nombre)
@@ -225,6 +232,16 @@ exports.update = async (req, res, next) => {
 exports.destroy = async (req, res, next) => {
 
   try {
+    //Si existe un usuario logueado se comprueba si es el mismo que el que se quiere borrar
+    if (req.usuarioLogueado && req.usuarioLogueado.id === req.load.usuario.id) {
+      
+      //Se indica a passport que cierre la sesion //OJO desde la version 0.6 de passport se necesita un callback de esta manera
+      req.logout(function(err) {if (err) { return next(err); }});
+
+      //Se borra la propiedad
+      delete req.session.loginExpirado
+    }
+
     //A través del usuario precargado en el metodo load llamamos al metodo destroy para eliminarlo de la base de datos
     await req.load.usuario.destroy();
 

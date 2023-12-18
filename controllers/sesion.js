@@ -66,7 +66,7 @@ exports.create = passport.authenticate(
 
 exports.createLoginExpires = async (req, res, next) => {
     //Guarda el instante de tiempo en el que expira la sesion momento actual + 5 minutos
-    req.session.loginExpires = Date.now() + tiempoExpiracion;
+    req.session.loginExpirado = Date.now() + tiempoExpiracion;
 
     //Redirecciona a la ruta que contenga goback
     res.redirect("/atras");
