@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
                 return `${this.nombrePerfil} (${tiposDeCuentas[this.tipoDeCuentaId]})`;
             }
         }
+
+        //Metodo para utenticar con las credenciales guardadas en la tabla Usuarios
+        verificarClave(clave) {
+            return cifrado.cifrarClave(clave, this.salt) === this.clave;
+        }
     }
   
     //Inicializacion y definicion del modelo para la tabla Usuarios
