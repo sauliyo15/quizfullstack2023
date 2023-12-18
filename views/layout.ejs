@@ -42,19 +42,19 @@
         <div class="right">
           <!--Si no existe la variable indica que no hay sesion de login y se habilita el enlace de inicio de sesion-->
           <% if (!locals.usuarioLogueado) { %>
-            <!--Entrar en el formulariio de login-->
-            <a href="/loguear">Iniciar Sesión</a>
-          <% } 
+            <a href="/login">Iniciar Sesión</a>
+          <% }
           <!--Sino se muestra la informacion del usuario logueado y dos enlaces para ver su perfil y cerrar sesion-->
           else { %>
             <!--Muestra al usuario autenticado con su displayNombre para que muestre si la cuenta es local o externa-->
-            <a href="/usuarios/<%= usuarioLogueado.id %>"><% usuarioLogueado.displayNombre %></a>
+            <a href="/usuarios/<%= usuarioLogueado.id %>"><%= usuarioLogueado.displayNombre %></a>
             <!--Boton de destruir la sesion-->
-            <a href="/loguear?_method=DELETE">Cerrar Sesión</a>
+            <a href="/login?_method=DELETE">Cerrar Sesión</a>
           <% } %>
         </div>
 
         <h1><span class="no-narrow">Sitio Web de </span>Juegos</h1>
+
       </header>
 
       <nav class="main" id="mainNav" role="navigation">

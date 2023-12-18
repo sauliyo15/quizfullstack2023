@@ -24,7 +24,7 @@ var flash = require('express-flash');
 var SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 //Se importa el modulo para la gestion de autenticacion de usarios.
-const passport = require('passport');
+var passport = require('passport');
 
 
 //Importar de los modulos con los routers generados en el directorio routes
@@ -80,7 +80,7 @@ app.use(session({secret: "juegosfull2023", store: sessionStore, resave: false, s
 app.use(flash());
 
 //Inicializa passport y define 'usuarioLogueado' como la propiedad de req que contiene al usuario autenticado si existe
-app.use(passport.initialize({ userProperty: 'usuarioLogueado'}));
+app.use(passport.initialize({userProperty: 'usuarioLogueado'}));
 
 //Conecta la sesion de login con la de cliente
 app.use(passport.session());
