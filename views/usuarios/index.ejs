@@ -10,7 +10,10 @@
                 <%= usuario.esAdministrador ? "(administrador)" : "" %>
             </td>
             <td>
-                <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+                <!--Bloqueo de boton Editar para usuarios no locales-->
+                <% if (!usuarios[i].tipoDeCuentaId) { %>
+                    <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+                <%} %>
             </td>
             <td>
                 <a href="/usuarios/<%= usuario.id %>?_method=DELETE"

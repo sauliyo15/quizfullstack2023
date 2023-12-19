@@ -7,8 +7,10 @@
 </ul>
 
 <p>
-    <!--Dos botones para editar o borrar el usuario-->
-    <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+    <!--Dos botones para editar (si el usuario es local) o borrar el usuario-->
+    <% if (!usuario.tipoDeCuentaId) { %>
+        <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+    <% } %>
     <a href="/usuarios/<%= usuario.id %>?_method=DELETE"
         onclick="return confirm('¿Borrar usuario <%= usuario.displayNombre %>?');"
          class="button">Borrar</a>
