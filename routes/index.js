@@ -93,9 +93,15 @@ router.get('/usuarios', usuarioController.index);
 router.get('/usuarios/:usuarioId(\\d+)', usuarioController.show);
 router.get('/usuarios/new', usuarioController.new);
 router.post('/usuarios', usuarioController.create);
-router.get('/usuarios/:usuarioId(\\d+)/edit', usuarioController.edit);
-router.put('/usuarios/:usuarioId(\\d+)', usuarioController.update);
+router.get('/usuarios/:usuarioId(\\d+)/edit', usuarioController.usuarioLocalRequerido, usuarioController.edit);
+router.put('/usuarios/:usuarioId(\\d+)', usuarioController.usuarioLocalRequerido, usuarioController.update);
 router.delete('/usuarios/:usuarioId(\\d+)', usuarioController.destroy);
+
+//Instalacion de los MW y rutas para la autenticacion con GitHub si sus variables de entorno estan definidas
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  router.get('/auth/github',sesionController.authGitHub);
+  router.get('/auth/github/callback', sesionController.authGitHubCB, sesionController.createLoginExpires);
+}
 
 
 //Se define el modulo como exportable ya que se importará en el fichero de app.js entre otros
