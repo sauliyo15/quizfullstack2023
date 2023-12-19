@@ -103,6 +103,12 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   router.get('/auth/github/callback', sesionController.authGitHubCB, sesionController.createLoginExpires);
 }
 
+//Instalacion de los MW y rutas para la autenticacion con Google si sus variables de entorno estan definidas
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  router.get('/auth/google',sesionController.authGoogle);
+  router.get('/auth/google/callback', sesionController.authGoogleCB, sesionController.createLoginExpires);
+}
+
 
 //Se define el modulo como exportable ya que se importará en el fichero de app.js entre otros
 module.exports = router;

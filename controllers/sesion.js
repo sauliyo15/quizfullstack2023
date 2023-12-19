@@ -13,12 +13,15 @@ const tiempoExpiracion = 5*60*1000;
 //Definicion de las credenciales de entorno a partir de las variables de entorno que haya definidas
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
 //Definicion de la direccion de la aplicacion
 const CALLBACK_BASE_URL = process.env.CALLBACK_BASE_URL || "http://localhost:3000";
 
 //Definicion de las estrategias especificas de cada uno de los portales
 const GitHubStrategy = GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET && require('passport-github2').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 
 //Chequear el tiempo de inactividad, si excede la sesion se destruye sino se actualiza el tiempo de sesion
@@ -56,7 +59,8 @@ exports.checkLoginExpires = (req, res, next) => {
 exports.new = async (req, res, next) => {
     //Se renderiza a la nueva vista con el formulario de login, indicando tambien si hay autenticacion con alguno de los portales externos
     res.render('sesion/new.ejs', {
-        loginWithGitHub: !!GitHubStrategy
+        loginWithGitHub: !!GitHubStrategy,
+        loginWithGoogle: !!GoogleStrategy
     });
 }
 
@@ -192,6 +196,50 @@ exports.authGitHubCB = GitHubStrategy && passport.authenticate(
         
         //Mensaje de fallo, login incorrecto
         failureFlash: 'El inicio de sesión con GitHub ha fallado, prueba otra vez.' 
+    }
+);
+
+
+GoogleStrategy && passport.use(new GoogleStrategy({
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: `${CALLBACK_BASE_URL}/auth/google/callback`
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      // Aquí puedes asociar la cuenta de Google con un registro de usuario en tu base de datos
+      // Puedes utilizar models.Usuario para buscar o crear un usuario según la información de Google.
+      const [user, created] = await models.Usuario.findOrCreate({
+        where: {
+          tipoDeCuentaId: models.Usuario.tipoDeCuentaId("google"),
+          perfilId: profile.id
+        },
+        defaults: {
+          nombrePerfil: profile.displayName
+        }
+      });
+      done(null, user);
+    } catch (error) {
+      done(error, null);
+    }
+  }
+));
+
+// GET /auth/google
+exports.authGoogle = GoogleStrategy && passport.authenticate('google', { scope: ['profile', 'email'] });
+
+// GET /auth/google/callback
+exports.authGoogleCB = GoogleStrategy && passport.authenticate(
+    'google',
+    {
+        //Redireccion en caso de fallo
+        failureRedirect: '/auth/google',
+
+        //Mensaje de exito, login correcto
+        successFlash: 'Bienvenido, inicio de sesión con Google correcto.',
+        
+        //Mensaje de fallo, login incorrecto
+        failureFlash: 'El inicio de sesión con Google ha fallado, prueba otra vez.' 
     }
 );
 
