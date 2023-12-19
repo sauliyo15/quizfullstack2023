@@ -26,6 +26,9 @@ var SequelizeStore = require('connect-session-sequelize')(session.Store);
 //Se importa el modulo para la gestion de autenticacion de usarios.
 var passport = require('passport');
 
+//Se importa el modulo para que muestre las variables definidas en el fichero .env en process.env
+require('dotenv').config();
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
