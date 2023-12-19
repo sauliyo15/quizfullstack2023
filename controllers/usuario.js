@@ -259,3 +259,17 @@ exports.destroy = async (req, res, next) => {
     next(error)
   }
 };
+
+
+//MW que limitara las acciones dependiendo si el usuario tiene el tipo de cuenta local o no
+exports.usuarioLocalRequerido = (req, res, next) => {
+
+  //
+  if (!req.load.usuario.tipoDeCuentaId) {
+    next();
+  }
+  else {
+    console.log('Acción prohibida: la cuenta de usuario debe ser local');
+    res.send(403);
+  }
+};
