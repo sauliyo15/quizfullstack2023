@@ -5,6 +5,12 @@ var app = require('../app');
 var debug = require('debug')('quizfullstack2023:server');
 var http = require('http');
 
+//Se importan los modulos necesarios para la redireccion a HTTPS
+var https = require('https'); //codigo del servidor https
+var fs = require('fs');       //acceso a ficheros del servidor
+var path = require('path');   //gestor de rutas
+var os = require('os');       //propiedades del sistema operativo
+
 //Se obtiene de la variable de entorno el puerto o se asigna el puerto 3000 por defecto
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
@@ -14,8 +20,38 @@ var server = http.createServer(app);
 
 ///Se arranca el servidor y se definen los eventos error y listening
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+server.on('error', onError.bind(undefined, port));
+server.on('listening', onListening.bind(undefined, server));
+
+
+///Crea el servidor HTTPS solo si existen los certificados
+try {
+  const options = {
+      key: fs.readFileSync("../etc/certificates/llave.pem"),
+      cert: fs.readFileSync("../etc/certificates/certificado.pem"),
+      ca: fs.readFileSync("../etc/certificates/cadDigiCertCA.pem")
+  };
+
+  var sport = normalizePort(process.env.SPORT || '3443');
+  app.set('sport', sport);
+
+  // Create HTTPS server.
+  const secureServer = https.createServer(options, app);
+
+  secureServer.listen(sport);
+
+  secureServer.on('error', onError.bind(undefined, sport));
+  secureServer.on('listening', onListening.bind(undefined, secureServer));
+
+} catch (err) {
+    if (err.code === 'ENOENT') {
+      debug("There are no SSL certificate files. No HTTPS Server created.");
+    } 
+    else {
+      debug(`ERROR: ${err.message || err}.`);
+    }
+}
+
 
 /**
  * Normalize a port into a number, string, or false.
@@ -41,7 +77,8 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+//Para HTTPs se añade a esta funcion el parametro explicito port
+function onError(port, error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -69,7 +106,8 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
+//Para HTTPs se añade a esta funcion el parametro explicito server
+function onListening(server) {
   var addr = server.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr

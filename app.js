@@ -29,6 +29,9 @@ var passport = require('passport');
 //Se importa el modulo para que muestre las variables definidas en el fichero .env en process.env
 require('dotenv').config();
 
+//Se importa el modulo para la redireccion de HTTP a HTTPS
+var rediretToHTTPS = require('express-http-to-https').redirectToHTTPS;
+
 
 //Importar de los modulos con los routers generados en el directorio routes
 var indexRouter = require('./routes/index');
@@ -98,6 +101,9 @@ app.use(function(req, res, next) {
   };
   next();
 });
+
+//Instalacion del MW redirecttohttps excluyendo redirigir cuando el seridor esta instalado en localhost en cualquier puerto
+app.use(rediretToHTTPS([/localhost:(\d{4})/], [], 301));
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas
