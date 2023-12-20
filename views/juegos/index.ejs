@@ -10,27 +10,35 @@
 
 <table>
     <!--Con la variable (array) recibida juegos se itera con codigo javascript incrustado en HTML-->
+
+    <!--Aunque prohibimos por medio de los controladores el acceso al visionado, edicion o borrado de juegos, sino se esta logueado, lo controlamos 
+          tambien aqui comprobando que existe o o usuarioLogueado-->
+
     <% for (var i in juegos) { %>
         <% var juego = juegos[i]; %>
         <tr>
             <td>
                 <a href="/juegos/<%= juego.id %>/play"><%= juego.pregunta %></a>
             </td>
-            <td>
-                <a href="/juegos/<%= juego.id %>" class="button">Ver</a>
-            </td>
-            <td>
-                <a href="/juegos/<%= juego.id %>/edit" class="button">Editar</a>
-            </td>
-            <td>
-                <a href="/juegos/<%= juego.id %>?_method=DELETE"
-                     onclick="return confirm('¿Borrar juego <%= juego.pregunta %>?');"
-                      class="button">Borrar</a>
-            </td>
+            <% if (locals.usuarioLogueado) { %>
+                <td>
+                    <a href="/juegos/<%= juego.id %>" class="button">Ver</a>
+                </td>
+                <td>
+                    <a href="/juegos/<%= juego.id %>/edit" class="button">Editar</a>
+                </td>
+                <td>
+                    <a href="/juegos/<%= juego.id %>?_method=DELETE"
+                        onclick="return confirm('¿Borrar juego <%= juego.pregunta %>?');"
+                        class="button">Borrar</a>
+                </td>
+            <% } %>
         </tr>
     <% } %>
     
     
 </table>
 
-<a href="/juegos/new" class="button">Añadir Juego</a>
+<% if (locals.usuarioLogueado) { %>
+    <a href="/juegos/new" class="button">Añadir Juego</a>
+<% } %>

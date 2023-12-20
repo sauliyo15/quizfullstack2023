@@ -61,7 +61,13 @@
         <a href="/">Inicio</a>
         <a href="/autor">Autor</a>
         <a href="/juegos">Juegos</a>
-        <a href="/usuarios">Usuarios</a>
+        
+        <!--Aunque prohibimos por medio de los controladores el acceso al index de usuarios, sino se esta logueado, lo controlamos 
+          tambien aqui comprobando que existe o o usuarioLogueado-->
+        <% if (locals.usuarioLogueado) { %>
+          <a href="/usuarios">Usuarios</a>
+        <% } %>
+        
         <a href="/juegos/randomplay">Jugar</a>
       </nav>
 

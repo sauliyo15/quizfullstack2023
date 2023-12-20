@@ -24,5 +24,9 @@
         </div>
     </form>
     </hr>
-    <a href="/usuarios/new">Crear una cuenta de usuario</a>
+    <% if (process.env.REGISTRO_ABIERTO === true) { %>
+        <div>
+            <a href="/usuarios/new">Crear una cuenta de usuario</a>
+        </div>
+    <% } %>
 </section>

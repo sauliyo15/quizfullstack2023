@@ -244,6 +244,66 @@ exports.authGoogleCB = GoogleStrategy && passport.authenticate(
 );
 
 
+//MW que controla si un usuario esta autenticado o no (a traves de la existencia de usuarioLogueado)
+exports.autenticacionRequerida = function (req, res, next) {
+    
+    //Si existe la variable el usuario se ha autenticado en el sistema
+    if (req.usuarioLogueado) {
+        //Se pasa al siguiente MW
+        next();
+    }
+    //Sino
+    else {
+        //Se muestra mensaje flash y se redirecciona a la pagina de inicio de sesion
+        req.flash("info", "Inicio de sesión requerido");
+        res.redirect('/loguear');
+    }
+};
+
+
+//MW que controla comprueba el usuario sobre el que se actua es el mismo usuario logueado o es un administrador
+exports.administradorOyoRequerido = function (req, res, next) {
+    
+    //Obtenemos si el usuario logueado es administrador
+    const esAdministrador = !!req.usuarioLogueado.esAdministrador;
+
+    //Obtenemos si el usuario precargado es el mismo que el precargado
+    const yoMismo = req.load.usuario.id === req.usuarioLogueado.id;
+
+    //Si se cumple alguna de la dos condiciones
+    if (esAdministrador || yoMismo) {
+        //Se pasa al siguiente MW
+        next();
+    }
+    //Sino
+    else {
+        //Es una acción no permitida y se redirecciona a una pantalla de error
+        console.log('Acción prohibida');
+        res.send(403);
+    }
+};
+
+
+//MW que controla comprueba el usuario que intenta realizar una accion es administrador
+exports.administradorRequerido = function (req, res, next) {
+    
+    //Obtenemos si el usuario logueado es administrador
+    const esAdministrador = !!req.usuarioLogueado.esAdministrador;
+
+    //Si lo es
+    if (esAdministrador) {
+        //Se pasa al siguiente MW
+        next();
+    }
+    //Sino
+    else {
+        //Es una acción no permitida y se redirecciona a una pantalla de error
+        console.log('Acción prohibida');
+        res.send(403);
+    }
+};
+
+
 
 
 

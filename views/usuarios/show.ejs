@@ -6,14 +6,18 @@
     <li>Administrador: <b><%= usuario.esAdministrador ? "Sí" : "No" %></b></li>
 </ul>
 
-<p>
-    <!--Dos botones para editar (si el usuario es local) o borrar el usuario-->
-    <% if (!usuario.tipoDeCuentaId) { %>
-        <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
-    <% } %>
-    <a href="/usuarios/<%= usuario.id %>?_method=DELETE"
-        onclick="return confirm('¿Borrar usuario <%= usuario.displayNombre %>?');"
-         class="button">Borrar</a>
-</p>
+<!--La vista solo muestra los botones Editar y Borrar a usuarios autenticados con permisos. El usuario puede borrarse o editarse a si mismo y
+el rol admin puede borrar o editar cualquier usuario-->
+<% if (locals.usuarioLogueado && (locals.usuarioLogueado.esAdministrador || locals.usuarioLogueado.id === usuario.id)) { %>
+    <p>
+        <!--Dos botones para editar (si el usuario es local) o borrar el usuario-->
+        <% if (!usuario.tipoDeCuentaId) { %>
+            <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+        <% } %>
+        <a href="/usuarios/<%= usuario.id %>?_method=DELETE"
+            onclick="return confirm('¿Borrar usuario <%= usuario.displayNombre %>?');"
+            class="button">Borrar</a>
+    </p>
+<% } %>
 
 <a href="/atras" class="button">Atrás</a>

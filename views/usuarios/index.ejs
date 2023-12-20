@@ -9,21 +9,27 @@
                 <a href="/usuarios/<%= usuario.id %>/"><%= usuario.displayNombre %></a>
                 <%= usuario.esAdministrador ? "(administrador)" : "" %>
             </td>
-            <td>
-                <!--Bloqueo de boton Editar para usuarios no locales-->
-                <% if (!usuarios[i].tipoDeCuentaId) { %>
-                    <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
-                <%} %>
-            </td>
-            <td>
-                <a href="/usuarios/<%= usuario.id %>?_method=DELETE"
-                     onclick="return confirm('¿Borrar usuario <%= usuario.displayNombre %>?');"
-                      class="button">Borrar</a>
-            </td>
+            <!--Solo se muestran los botones de edit, create o delete a usuarios autenticados. El usuario solo tiene los botones de
+            de Editar y Borrar sobre su registro y el administrador sobre todos y tambien de añadir usuario-->
+            <% if (locals.usuarioLogueado && (locals.usuarioLogueado.esAdministrador || locals.usuarioLogueado.id === usuarios[i].id)) { %>
+                <td>
+                    <!--Bloqueo de boton Editar para usuarios no locales-->
+                    <% if (!usuarios[i].tipoDeCuentaId) { %>
+                        <a href="/usuarios/<%= usuario.id %>/edit" class="button">Editar</a>
+                    <%} %>
+                </td>
+                <td>
+                    <a href="/usuarios/<%= usuario.id %>?_method=DELETE"
+                        onclick="return confirm('¿Borrar usuario <%= usuario.displayNombre %>?');"
+                        class="button">Borrar</a>
+                </td>
+            <% } %>
         </tr>
     <% } %>
     
     
 </table>
 
-<a href="/usuarios/new" class="button">Añadir Usuario</a>
+<% if (locals.usuarioLogueado && locals.usuarioLogueado.esAdministrador) { %>
+    <a href="/usuarios/new" class="button">Añadir Usuario</a>
+<% } %>
