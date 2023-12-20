@@ -58,22 +58,23 @@
       </header>
 
       <nav class="main" id="mainNav" role="navigation">
-        <a href="/">Inicio</a>
-        <a href="/autor">Autor</a>
-        <a href="/juegos">Juegos</a>
+        <a href="/"><h3>Inicio</h3></a>
+        <a href="/autor"><h3>Autor</h3></a>
+        <a href="/juegos"><h3>Juegos</h3></a>
+        <a href="/grupos"><h3>Grupos</h3></a>
 
         <!--Mostramos si el usuario esta autenticado una pestaña para accede a sus propios juegos-->
         <% if (locals.usuarioLogueado) { %>
-          <a href="/usuarios/<%= locals.usuarioLogueado.id %>/juegos">Mis Juegos</a>
+          <a href="/usuarios/<%= locals.usuarioLogueado.id %>/juegos"><h3>Mis Juegos</h3></a>
         <% } %>
         
         <!--Aunque prohibimos por medio de los controladores el acceso al index de usuarios, sino se esta logueado, lo controlamos 
           tambien aqui comprobando que existe o o usuarioLogueado-->
         <% if (locals.usuarioLogueado) { %>
-          <a href="/usuarios">Usuarios</a>
+          <a href="/usuarios"><h3>Usuarios</h3></a>
         <% } %>
         
-        <a href="/juegos/randomplay">Jugar</a>
+        <a href="/juegos/randomplay"><h3>Jugar</h3></a>
       </nav>
 
       <section class="main" id="mainSection">
