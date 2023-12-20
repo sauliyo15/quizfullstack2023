@@ -1,0 +1,30 @@
+<h1>Grupos:</h1>
+
+<table>
+    <!--Con la variable (array) recibida grupos se itera con codigo javascript incrustado en HTML-->
+    <% for (var i in grupos) { %>
+        <% var grupo = grupos[i]; %>
+        <tr>
+            <td>
+                <a href="/grupos/<%= grupo.id %>/randomplay"><%= grupo.nombre %></a>
+            </td>
+            
+                <td>
+                    <a href="/grupos/<%= grupo.id %>/edit" class="button">Editar</a>
+                </td>
+                <td>
+                    <a href="/grupos/<%= grupo.id %>?_method=DELETE"
+                       onClick="return confirm('Delete: <%= grupo.nombre %>');"
+                       class="button">Borrar</a>
+                </td>
+
+            <td>
+                <img src="<%= grupo.imagen || '/images/imagen_no_disponible.png' %>" alt="Imagen del grupo" style="width: 200px; height: 150px;">
+            </td>
+            
+        </tr>
+    <% } %>
+</table>
+
+
+    <a href="/grupos/new" class="button">Crear Nuevo Grupo</a>
