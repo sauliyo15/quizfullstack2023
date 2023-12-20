@@ -7,6 +7,9 @@
     <!--Con la variable recibida juego se muestran sus datos-->
     <li>Pregunta: <b><%= juego.pregunta %></b></li>
     <li>Respuesta: <b><%= juego.respuesta %></b></li>
+    <li>Dirección de la imagen: <b><a href="<%= juego.imagen %>" target="_blank"><%= juego.imagen %></a></b></li>
 </ul>
-
+<img src="<%= juego.imagen || '/images/imagen_no_disponible.png' %>" alt="Imagen del juego" style="width: 200px; height: 150px;">
+<br>
+<br>
 <a href="/atras" class="button">Atrás</a>

@@ -123,17 +123,17 @@ exports.new = (req, res, next) => {
 exports.create = async (req, res, next) => {
 
   //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
-  const {pregunta, respuesta} = req.body;
+  const {pregunta, respuesta, imagen} = req.body;
 
   //Obtnemos de la peticion el id del usuario logueado, que será el author del quiz
   const autorId = req.usuarioLogueado.id;
 
   //Crea un objeto compatible con la tabla juegos
-  let juego = models.Juego.build({pregunta, respuesta, autorId});
+  let juego = models.Juego.build({pregunta, respuesta, imagen, autorId});
 
   try {
-    //Crea una nueva entrada en la tabla de la base de datos con pregunta y respuesta
-    juego = await juego.save({fields: ["pregunta", "respuesta", "autorId"]});
+    //Crea una nueva entrada en la tabla de la base de datos con pregunta, respuesta, imagen y el id del autor
+    juego = await juego.save({fields: ["pregunta", "respuesta", "imagen", "autorId"]});
 
     //Enviar mensaje flash de juego creado con exito
     req.flash('exito', 'Juego creado satisfactoriamente');
@@ -181,7 +181,7 @@ exports.edit = (req, res, next) => {
 exports.update = async (req, res, next) => {
 
   //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
-  const {pregunta, respuesta} = req.body;
+  const {pregunta, respuesta, imagen} = req.body;
   
   //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
   const {juego} = req.load;
@@ -189,10 +189,11 @@ exports.update = async (req, res, next) => {
   //Se actualizan los valores de juego con los strings recibidos del formulario
   juego.pregunta = pregunta;
   juego.respuesta = respuesta;
+  juego.imagen = imagen;
 
   try {
-    //Guarda los campos pregunta y respuesta 
-    await juego.save({fields: ["pregunta", "respuesta"]});
+    //Guarda los campos pregunta, respuesta  y la imagen
+    await juego.save({fields: ["pregunta", "respuesta", "imagen"]});
 
     //Enviar mensaje flash de juego actualizado con exito
     req.flash('exito', 'Juego actualizado satisfactoriamente');

@@ -28,6 +28,10 @@ module.exports = {
           type: Sequelize.STRING,
           validate: { notEmpty: { msg: "La respuesta no puede estar vacía." } },
         },
+        imagen: {
+          type: Sequelize.STRING,
+          defaultValue: '/images/imagen_no_disponible.png', // Ruta por defecto
+        },
         createdAt: {
           type: Sequelize.DATE,
           allowNull: false,

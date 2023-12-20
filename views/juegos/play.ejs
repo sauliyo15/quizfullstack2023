@@ -5,8 +5,17 @@
 
 <form method="get" action="/juegos/<%= juego.id %>/check">
 
-    <p>Pregunta: <b><%= juego.pregunta %></b></p>
-
+    <table>
+        <tr>
+            <td>
+                <p>Pregunta: <b><%= juego.pregunta %></b></p>
+            </td>
+            <td>
+                <img src="<%= juego.imagen || '/images/imagen_no_disponible.png' %>" alt="Imagen del juego" style="width: 200px; height: 150px;">
+            </td>
+        </tr>
+    </table>
+    <br>    
     <div class="wideRow">
         <!--Si la variable respuesta tiene algun contenido se mostrara (vendremos de un intento anterior)-->
         <input type="text" class="itemWide"

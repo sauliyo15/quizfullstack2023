@@ -3,8 +3,17 @@
 <div>Respuestas correctas: <span id="score"><%= puntuacion %></span></div>
 
 <form method="get" action="/juegos/randomcheck/<%= juego.id %>">
-  <p>Pregunta: <b><%= juego.pregunta %></b></p>
-
+  <table>
+    <tr>
+        <td>
+            <p>Pregunta: <b><%= juego.pregunta %></b></p>
+        </td>
+        <td>
+          <img src="<%= juego.imagen || '/images/imagen_no_disponible.png' %>" alt="Imagen del juego" style="width: 200px; height: 150px;">
+        </td>
+    </tr>
+  </table>
+  <br>
   <div class="wideRow">
     <input
       type="text"

@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.STRING,
           validate: { notEmpty: { msg: "La respuesta no puede estar vacía." } },
         },
+        imagen: {
+          type: DataTypes.STRING,
+          defaultValue: '/images/imagen_no_disponible.png',
+      },
       },
       { sequelize }
     );

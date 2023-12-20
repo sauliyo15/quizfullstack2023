@@ -9,8 +9,27 @@
     <label for="resp" class="itemNarrow">Respuesta:</label>
     <input type="text" class="itemWide" id="resp" name="respuesta" value="<%= juego.respuesta %>" placeholder="Respuesta" autocomplete="off"/>
 </div>
-
 <br/>
-
+<div class="wideRow">
+    <!--Con name se definen los nombres de los parametros de cada input que iran en el body de la solicitud HTTP-->
+    <label for="imagen" class="itemNarrow">Dirección de la imagen:</label>
+    <input type="text" class="itemWide" id="imagen" name="imagen" value="<%= juego.imagen %>" placeholder="Imagen" autocomplete="off"/>
+</div>
+<br/>
+<img id="fotografia" src="<%= juego.imagen || '/images/imagen_no_disponible.png' %>" alt="Imagen del juego" style="width: 200px; height: 150px;">
+<br/>
+<br/>
 <a href="/atras" class="button">Cancelar</a>
 <input type="submit" value="Guardar">
+
+<!-- Agrega un script JavaScript al final del cuerpo del documento -->
+<script>
+    var imagen = document.getElementById('imagen');
+    var fotografia = document.getElementById('fotografia');
+
+    // Agrega un evento de cambio al input de imagen para actualizar la fotografia
+    imagen.addEventListener('input', function() {
+        fotografia.src = imagen.value || '/images/imagen_no_disponible.png';
+    });
+
+</script>
