@@ -170,8 +170,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 //Instalacion de MWs router que atienden a las rutas relacionadas con el interfaz CRUD de los Grupos. Añadidos la autorizacion y roles con MWs en serie
 router.get('/grupos', grupoController.index);
-/*router.get('/grupos/new', grupoController.new);
-router.post('/grupos', grupoController.create);
+router.get('/grupos/new', grupoController.new);
+/*router.post('/grupos', grupoController.create);
 router.get('/grupos/:grupoId(\\d+)/edit', grupoController.edit);
 router.put('/grupos/:grupoId(\\d+)', grupoController.update);
 router.delete('/grupos/:grupoId(\\d+)', grupoController.destroy);*/

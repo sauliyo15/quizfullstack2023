@@ -43,3 +43,14 @@ exports.index = async (req, res, next) => {
       next(error);
     }
   };
+
+
+  //GET /grupos/new
+exports.new = (req, res, next) => {
+  
+  //Creamos un objeto con strings vacios para que se represente así en el formulario de la vista
+  const grupo = {nombre: "", imagen: ""};
+
+  //Se llama a la renderizacion de la vista, incluyendo como parametro el grupo
+  res.render("grupos/new.ejs", { grupo });
+};

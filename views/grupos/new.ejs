@@ -1,0 +1,35 @@
+<h1>Añadir Grupo</h1>
+
+<form method="post" action="/grupos">
+
+    <div class="wideRow">
+        <label for="name" class="itemNarrow">Nombre del Grupo:</label>
+        <input type="text" class="itemWide" id="name" name="nombre" value="<%= grupo.nombre %>" placeholder="Nombre del Grupo"
+               autocomplete="off"/>
+    </div>
+    <br/>
+    <div class="wideRow">
+        <!--Con name se definen los nombres de los parametros de cada input que iran en el body de la solicitud HTTP-->
+        <label for="imagen" class="itemNarrow">Dirección de la imagen:</label>
+        <input type="text" class="itemWide" id="imagen" name="imagen" value="<%= grupo.imagen %>" placeholder="Imagen" autocomplete="off"/>
+    </div>
+    <br/>
+    <img id="fotografia" src="<%= grupo.imagen || '/images/imagen_no_disponible.png' %>" alt="Imagen del grupo" style="width: 200px; height: 150px;">
+    <br/>
+    <br/>
+    <a href="/atras" class="button">Cancelar</a>
+    <input type="submit" value="Guardar">
+
+</form>
+
+<!-- Agrega un script JavaScript al final del cuerpo del documento -->
+<script>
+    var imagen = document.getElementById('imagen');
+    var fotografia = document.getElementById('fotografia');
+
+    // Agrega un evento de cambio al input de imagen para actualizar la fotografia
+    imagen.addEventListener('input', function() {
+        fotografia.src = imagen.value || '/images/imagen_no_disponible.png';
+    });
+
+</script>
