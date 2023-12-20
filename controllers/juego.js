@@ -16,8 +16,8 @@ const Op = Sequelize.Op;
 tambien utilizan :juegoId pueden utilizarlo sin necesidad de cargarlo nuevamente*/
 exports.load = async (req, res, next, juegoId) => {
   try {
-    //Se busca el juego a traves de su id en la base de datos
-    const juego = await models.Juego.findByPk(juegoId);
+    //Se busca el juego a traves de su id en la base de datos, tambien su correspondiente autor
+    const juego = await models.Juego.findByPk(juegoId, {include: [{model: models.Usuario, as: 'autor'}]});
     if (juego) {
       //Si se encuentra el juego, se agrega al objeto 'load' en el objeto 'req' y se pasa al siguiente middleware o controlador
       req.load = { ...req.load, juego }; //Spread (clonacion)
@@ -36,8 +36,11 @@ exports.load = async (req, res, next, juegoId) => {
 //GET /juegos
 exports.index = async (req, res, next) => {
 
-  //Opciones de busqueda se construyen añadiendo incrementalmente propiedades con opciones (inicialmente objeto vacio)
-  let opciones_busqueda = {};
+  //Se utilizara una variable para mandar el titulo a la vista, dependiento si estamos en Juegos o Mis Juegos
+  let titulo = 'Juegos';
+
+  //Opciones de busqueda se construyen añadiendo incrementalmente propiedades con opciones (inicialmente objeto vacio con where)
+  let opciones_busqueda = { where: {}};
 
   //Extraer (si existe el texto de busqueda) de la peticion
   const busqueda = req.query.busqueda || '';
@@ -47,8 +50,18 @@ exports.index = async (req, res, next) => {
     //Normalizamos el patron de busqueda con ayuda de expresiones regulares
     const patron_busqueda = "%" + busqueda.replace(/ +/g,"%") + "%";
 
-    //Se crea la expresion de busqueda
-    opciones_busqueda.where = {pregunta: { [Op.like]: patron_busqueda}};
+    //Se incluye la expresion de busqueda
+    opciones_busqueda.where.pregunta = { [Op.like]: patron_busqueda};
+  }
+
+  //Si hay algun usuario precargado (vendremos de la ruta Mis Juegos donde se precarga el usuario a traves de su id)
+  if (req.load && req.load.usuario) {
+    
+    //Entonces se deberan buscar solo las preguntas de ese usuario incluyendo esa condicion en las opciones de busqueda
+    opciones_busqueda.where.autorId = req.load.usuario.id;
+
+    //Se mandara otro titulo a la vista
+    titulo = 'Mis Juegos';
   }
 
   try {
@@ -67,15 +80,16 @@ exports.index = async (req, res, next) => {
     res.locals.control_paginacion = paginacion(numero, elementos_por_pagina, pageno, req.url);
 
     /*Se incorporan al objeto opciones_busqueda las condiciones de busqueda para extraer cada vez 10 elementos (limit) 
-    de la base de datos dependiendo en que pagina estemos (offset)*/
+    de la base de datos dependiendo en que pagina estemos (offset) y tambien extraer su autor a traves de la relacion establecida*/
     opciones_busqueda.offset = elementos_por_pagina * (pageno - 1);
     opciones_busqueda.limit =  elementos_por_pagina;
+    opciones_busqueda.include = [{model: models.Usuario, as: 'autor'}];
     
     //Se buscan 'todos' los juegos en la base de datos con las opciones de busqueda de la paginacion
     const juegos = await models.Juego.findAll(opciones_busqueda);
 
     //Se llama a la renderizacion de la vista, incluyendo como parametro los juegos obtenidos y el texto de busqueda
-    res.render("juegos/index.ejs", { juegos, busqueda });
+    res.render("juegos/index.ejs", { juegos, busqueda, titulo });
 
   } catch (error) {
     next(error);
@@ -111,12 +125,15 @@ exports.create = async (req, res, next) => {
   //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
   const {pregunta, respuesta} = req.body;
 
+  //Obtnemos de la peticion el id del usuario logueado, que será el author del quiz
+  const autorId = req.usuarioLogueado.id;
+
   //Crea un objeto compatible con la tabla juegos
-  let juego = models.Juego.build({pregunta, respuesta});
+  let juego = models.Juego.build({pregunta, respuesta, autorId});
 
   try {
     //Crea una nueva entrada en la tabla de la base de datos con pregunta y respuesta
-    juego = await juego.save({fields: ["pregunta", "respuesta"]});
+    juego = await juego.save({fields: ["pregunta", "respuesta", "autorId"]});
 
     //Enviar mensaje flash de juego creado con exito
     req.flash('exito', 'Juego creado satisfactoriamente');
@@ -378,3 +395,26 @@ exports.randomCheck = async (req, res, next) => {
   //Renderizamoa a la vista correspondiente con los parametros requeridos
   res.render("juegos/random_result.ejs", { puntuacion, resultado, respuesta });
 }
+
+
+//MW que controla comprueba el usuario autenticado que actua sobre un juego es su autor o es un administrador
+exports.administradorOautorRequerido = function (req, res, next) {
+    
+  //Obtenemos si el usuario logueado es administrador
+  const esAdministrador = !!req.usuarioLogueado.esAdministrador;
+
+  //Obtenemos a traves del juego precargado su autor para ver si es el mismo que el usuario logueado
+  const autor = req.load.juego.autorId === req.usuarioLogueado.id;
+
+  //Si se cumple alguna de la dos condiciones
+  if (esAdministrador || autor) {
+      //Se pasa al siguiente MW
+      next();
+  }
+  //Sino
+  else {
+      //Es una acción no permitida y se redirecciona a una pantalla de error
+      console.log('Acción prohibida');
+      res.send(403);
+  }
+};

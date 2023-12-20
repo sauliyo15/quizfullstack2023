@@ -50,7 +50,7 @@ function guardarUrl(req, res, next) {
 }
 
 //Rutas que activan el middleware saveBack para guardar la URL antes de estas rutas
-router.get(['/', '/autor', '/juegos', '/usuarios'], guardarUrl);
+router.get(['/', '/autor', '/juegos', '/usuarios', '/usuarios/:id(\\d+)/juegos'], guardarUrl);
 
 
 //Instalacion de MWs router que atienden a las rutas indicadas: /
@@ -72,12 +72,12 @@ router.param('juegoId', juegoController.load);
 
 //Instalacion de MWs router que atienden a las rutas relacionadas con el interfaz CRUD de los Juegos. Añadidos la autorizacion y roles con MWs en serie
 router.get('/juegos', juegoController.index);
-router.get('/juegos/:juegoId(\\d+)', sesionController.autenticacionRequerida, juegoController.show);
+router.get('/juegos/:juegoId(\\d+)', sesionController.autenticacionRequerida, juegoController.administradorOautorRequerido, juegoController.show);
 router.get('/juegos/new', sesionController.autenticacionRequerida, juegoController.new);
 router.post('/juegos', sesionController.autenticacionRequerida, juegoController.create);
-router.get('/juegos/:juegoId(\\d+)/edit', sesionController.autenticacionRequerida, juegoController.edit);
-router.put('/juegos/:juegoId(\\d+)', sesionController.autenticacionRequerida, juegoController.update);
-router.delete('/juegos/:juegoId(\\d+)', sesionController.autenticacionRequerida, juegoController.destroy);
+router.get('/juegos/:juegoId(\\d+)/edit', sesionController.autenticacionRequerida, juegoController.administradorOautorRequerido, juegoController.edit);
+router.put('/juegos/:juegoId(\\d+)', sesionController.autenticacionRequerida, juegoController.administradorOautorRequerido, juegoController.update);
+router.delete('/juegos/:juegoId(\\d+)', sesionController.autenticacionRequerida, juegoController.administradorOautorRequerido, juegoController.destroy);
 
 //Instalacion de los MWs para atender a las rutas que permiten jugar con los juegos
 router.get('/juegos/:juegoId(\\d+)/play', juegoController.play);
@@ -92,6 +92,7 @@ router.param('usuarioId', usuarioController.load);
 router.get('/usuarios', sesionController.autenticacionRequerida, usuarioController.index);
 router.get('/usuarios/:usuarioId(\\d+)', sesionController.autenticacionRequerida, usuarioController.show);
 
+//Registro libre de usuarios o no
 if (process.env.REGISTRO_ABIERTO === true) {
   router.get('/usuarios/new', usuarioController.new);
   router.post('/usuarios', usuarioController.create);
@@ -104,6 +105,7 @@ else {
 router.get('/usuarios/:usuarioId(\\d+)/edit', sesionController.autenticacionRequerida, usuarioController.usuarioLocalRequerido, sesionController.administradorOyoRequerido, usuarioController.edit);
 router.put('/usuarios/:usuarioId(\\d+)', sesionController.autenticacionRequerida, usuarioController.usuarioLocalRequerido, sesionController.administradorOyoRequerido, usuarioController.update);
 router.delete('/usuarios/:usuarioId(\\d+)', sesionController.autenticacionRequerida, sesionController.administradorOyoRequerido, usuarioController.destroy);
+router.get('/usuarios/:usuarioId(\\d+)/juegos', sesionController.autenticacionRequerida, juegoController.index);
 
 //Instalacion de los MW y rutas para la autenticacion con GitHub si sus variables de entorno estan definidas
 if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {

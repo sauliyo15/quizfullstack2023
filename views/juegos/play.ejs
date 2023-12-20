@@ -1,3 +1,6 @@
+<div class="right">
+    <small>(creado por: <%= juego.autor ? juego.autor.displayNombre : 'Desconocido' %>)</small>
+</div>
 <h1>Jugar: </h1>
 
 <form method="get" action="/juegos/<%= juego.id %>/check">

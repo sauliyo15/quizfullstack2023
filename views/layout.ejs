@@ -61,6 +61,11 @@
         <a href="/">Inicio</a>
         <a href="/autor">Autor</a>
         <a href="/juegos">Juegos</a>
+
+        <!--Mostramos si el usuario esta autenticado una pestaña para accede a sus propios juegos-->
+        <% if (locals.usuarioLogueado) { %>
+          <a href="/usuarios/<%= locals.usuarioLogueado.id %>/juegos">Mis Juegos</a>
+        <% } %>
         
         <!--Aunque prohibimos por medio de los controladores el acceso al index de usuarios, sino se esta logueado, lo controlamos 
           tambien aqui comprobando que existe o o usuarioLogueado-->

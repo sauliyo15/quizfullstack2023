@@ -1,4 +1,4 @@
-<h1>Juegos</h1>
+<h1><%= titulo %></h1>
 
 <!--Formulario que incluye un cajetin de busqueda para encontrar juegos-->
 <div class="right">
@@ -20,7 +20,10 @@
             <td>
                 <a href="/juegos/<%= juego.id %>/play"><%= juego.pregunta %></a>
             </td>
-            <% if (locals.usuarioLogueado) { %>
+            <td colspan="2">
+                <small>(creado por: <%= juego.autor ? juego.autor.displayNombre : 'Desconocido' %>)</small>
+            </td>
+            <% if (locals.usuarioLogueado && (locals.usuarioLogueado.esAdministrador || locals.usuarioLogueado.id === juego.autorId)) { %>
                 <td>
                     <a href="/juegos/<%= juego.id %>" class="button">Ver</a>
                 </td>
