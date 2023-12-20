@@ -31,14 +31,15 @@ Usuario.hasMany(Juego, {as: 'juegos', foreignKey: 'autorId'});
 Juego.belongsTo(Usuario, {as: 'autor', foreignKey: 'autorId'});
 
 //Definicion de relaciones Juego-Grupos N-M
-Juego.belongsTo(Grupo, {
-    as: 'grupos', 
+Juego.belongsToMany(Grupo, {
+    as: 'grupos',
     through: 'GrupoJuegos',
     foreignKey: 'juegoId',
     otherKey: 'grupoId'
 });
-Grupo.belongsTo(Juego, {
-    as: 'juegos', 
+
+Grupo.belongsToMany(Juego, {
+    as: 'juegos',
     through: 'GrupoJuegos',
     foreignKey: 'grupoId',
     otherKey: 'juegoId'
