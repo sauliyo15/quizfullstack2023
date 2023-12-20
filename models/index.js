@@ -22,10 +22,27 @@ sequelize.import(path.join(__dirname, 'sesion'));
 //Se importa el modelo Usuario desde el archivo 'usuario' en el mismo directorio que este script
 const Usuario = sequelize.import(path.join(__dirname, 'usuario'));
 
+//Se importa el modelo Grupo desde el archivo 'grupo' en el mismo directorio que este script
+const Grupo = sequelize.import(path.join(__dirname, 'grupo'));
 
-//Definicion de relaciones Usurio-Juego 1-N
+
+//Definicion de relaciones Usuario-Juego 1-N
 Usuario.hasMany(Juego, {as: 'juegos', foreignKey: 'autorId'});
 Juego.belongsTo(Usuario, {as: 'autor', foreignKey: 'autorId'});
+
+//Definicion de relaciones Juego-Grupos N-M
+Juego.belongsTo(Grupo, {
+    as: 'grupos', 
+    through: 'GrupoJuegos',
+    foreignKey: 'juegoId',
+    otherKey: 'grupoId'
+});
+Grupo.belongsTo(Juego, {
+    as: 'juegos', 
+    through: 'GrupoJuegos',
+    foreignKey: 'grupoId',
+    otherKey: 'juegoId'
+});
 
 
 //Se exporta la instancia de Sequelize configurada para ser utilizada en otras partes de la aplicación
