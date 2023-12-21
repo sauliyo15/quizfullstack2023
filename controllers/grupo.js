@@ -14,7 +14,7 @@ tambien utilizan :grupoId pueden utilizarlo sin necesidad de cargarlo nuevamente
 exports.load = async (req, res, next, grupoId) => {
   try {
     //Se busca el grupo a traves de su id en la base de datos
-    const grupo = await models.Juego.findByPk(grupoId);
+    const grupo = await models.Grupo.findByPk(grupoId);
     if (grupo) {
       //Si se encuentra el grupo, se agrega al objeto 'load' en el objeto 'req' y se pasa al siguiente middleware o controlador
       req.load = { ...req.load, grupo }; //Spread (clonacion)
@@ -34,7 +34,7 @@ exports.load = async (req, res, next, grupoId) => {
 exports.index = async (req, res, next) => {
       
     //Opciones de busqueda se construyen añadiendo incrementalmente propiedades con opciones (inicialmente objeto vacio)
-    let opciones_busqueda = { }
+    let opciones_busqueda = { };
       
     try {
       //Para incorporar la paginacion lo primero que se debe saber es el numero total de grupos de la bbdd
@@ -78,33 +78,30 @@ exports.new = (req, res, next) => {
 };
 
 
-//POST /juegos
+//POST /grupos
 exports.create = async (req, res, next) => {
 
   //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
-  const {pregunta, respuesta, imagen} = req.body;
+  const {nombre, imagen} = req.body;
 
-  //Obtnemos de la peticion el id del usuario logueado, que será el author del quiz
-  const autorId = req.usuarioLogueado.id;
-
-  //Crea un objeto compatible con la tabla juegos
-  let juego = models.Juego.build({pregunta, respuesta, imagen, autorId});
+  //Crea un objeto compatible con la tabla grupos
+  let grupo = models.Grupo.build({nombre, imagen});
 
   try {
-    //Crea una nueva entrada en la tabla de la base de datos con pregunta, respuesta, imagen y el id del autor
-    juego = await juego.save({fields: ["pregunta", "respuesta", "imagen", "autorId"]});
+    //Crea una nueva entrada en la tabla de la base de datos con nombre y la imagen del grupo
+    grupo = await grupo.save({fields: ["nombre", "imagen"]});
 
-    //Enviar mensaje flash de juego creado con exito
-    req.flash('exito', 'Juego creado satisfactoriamente');
+    //Enviar mensaje flash de grupo creado con exito
+    req.flash('exito', 'Grupo creado satisfactoriamente');
 
-    //Una vez almacenado en la base de datos el juego, se redirige a la visualizacion del mismo
-    res.redirect('/juegos/' + juego.id);    
+    //Una vez almacenado en la base de datos el grupo, se redirige al index de grupos
+    res.redirect('/grupos/');    
 
   } catch (error) {
     //Si algun cajetin esta vacio se generara un error de validacion
     if (error instanceof Sequelize.ValidationError) {
 
-      //Enviar mensaje flash de error durante la creacion del juego
+      //Enviar mensaje flash de error durante la creacion del grupo
       req.flash('error', 'Hay errores en el formulario');
       console.log('Hay errores en el formulario');
 
@@ -112,11 +109,11 @@ exports.create = async (req, res, next) => {
         req.flash('error', message);
         console.log(message)});
 
-      res.render("juegos/new.ejs", { juego });
+      res.render("grupos/new.ejs", { grupo });
     }
     else {
-      //Enviar mensaje flash de error durante la creacion del juego
-      req.flash('error', 'Error creando un nuevo juego');
+      //Enviar mensaje flash de error durante la creacion del grupo
+      req.flash('error', 'Error creando un nuevo grupo');
 
       //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
       next(error);
