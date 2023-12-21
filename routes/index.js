@@ -166,7 +166,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 //Instalacion de la funcion grupoController.load de autoload de grupos
-//router.param('grupoId', grupoController.load);
+router.param('grupoId', grupoController.load);
 
 //Instalacion de MWs router que atienden a las rutas relacionadas con el interfaz CRUD de los Grupos. Añadidos la autorizacion y roles con MWs en serie
 router.get('/grupos', grupoController.index);

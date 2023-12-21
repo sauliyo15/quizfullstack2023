@@ -8,6 +8,28 @@ const { models } = require("../models");
 const paginacion = require("../helpers/paginacion").paginate;
 
 
+/*Autoload el grupo asociado a :grupoId que precarga el grupo indentificado en la tabla por el 
+:grupoId de la ruta y lo guarda en req.load.grpo de esta forma los controladores que 
+tambien utilizan :grupoId pueden utilizarlo sin necesidad de cargarlo nuevamente*/
+exports.load = async (req, res, next, grupoId) => {
+  try {
+    //Se busca el grupo a traves de su id en la base de datos
+    const grupo = await models.Juego.findByPk(grupoId);
+    if (grupo) {
+      //Si se encuentra el grupo, se agrega al objeto 'load' en el objeto 'req' y se pasa al siguiente middleware o controlador
+      req.load = { ...req.load, grupo }; //Spread (clonacion)
+      next();
+    } else {
+      //Si no se encuentra el grupo, se lanza un error
+      throw new Error("No existe ningún grupo con id: " + grupoId);
+    }
+    //Si hay un error durante la busqueda del grupo, se pasa al siguiente middleware con el error
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 //GET /grupos
 exports.index = async (req, res, next) => {
       
@@ -45,7 +67,7 @@ exports.index = async (req, res, next) => {
   };
 
 
-  //GET /grupos/new
+//GET /grupos/new
 exports.new = (req, res, next) => {
   
   //Creamos un objeto con strings vacios para que se represente así en el formulario de la vista
@@ -53,4 +75,51 @@ exports.new = (req, res, next) => {
 
   //Se llama a la renderizacion de la vista, incluyendo como parametro el grupo
   res.render("grupos/new.ejs", { grupo });
+};
+
+
+//POST /juegos
+exports.create = async (req, res, next) => {
+
+  //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
+  const {pregunta, respuesta, imagen} = req.body;
+
+  //Obtnemos de la peticion el id del usuario logueado, que será el author del quiz
+  const autorId = req.usuarioLogueado.id;
+
+  //Crea un objeto compatible con la tabla juegos
+  let juego = models.Juego.build({pregunta, respuesta, imagen, autorId});
+
+  try {
+    //Crea una nueva entrada en la tabla de la base de datos con pregunta, respuesta, imagen y el id del autor
+    juego = await juego.save({fields: ["pregunta", "respuesta", "imagen", "autorId"]});
+
+    //Enviar mensaje flash de juego creado con exito
+    req.flash('exito', 'Juego creado satisfactoriamente');
+
+    //Una vez almacenado en la base de datos el juego, se redirige a la visualizacion del mismo
+    res.redirect('/juegos/' + juego.id);    
+
+  } catch (error) {
+    //Si algun cajetin esta vacio se generara un error de validacion
+    if (error instanceof Sequelize.ValidationError) {
+
+      //Enviar mensaje flash de error durante la creacion del juego
+      req.flash('error', 'Hay errores en el formulario');
+      console.log('Hay errores en el formulario');
+
+      error.errors.forEach(({ message }) => {
+        req.flash('error', message);
+        console.log(message)});
+
+      res.render("juegos/new.ejs", { juego });
+    }
+    else {
+      //Enviar mensaje flash de error durante la creacion del juego
+      req.flash('error', 'Error creando un nuevo juego');
+
+      //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+      next(error);
+    }
+  }
 };
