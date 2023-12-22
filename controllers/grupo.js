@@ -189,3 +189,26 @@ exports.update = async (req, res, next) => {
     }
   }
 };
+
+
+//DELETE /grupos/:grupoId
+exports.destroy = async (req, res, next) => {
+
+  try {
+    //A través del grupo precargado en el metodo load llamamos al metodo destroy para eliminarlo de la base de datos
+    await req.load.grupo.destroy();
+
+    //Enviar mensaje flash de grupo borrado con exito
+    req.flash('exito', 'Grupo borrado satisfactoriamente');
+
+    //Una vez borrado en la base de datos el grupo, se redirige la direccion almacenada en /atras
+    res.redirect('/atras');    
+    
+  } catch (error) {
+    //Enviar mensaje flash de error durante el borrado de un grupo
+    req.flash('error', 'Error borrando un grupo');
+
+    //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+    next(error)
+  }
+};
