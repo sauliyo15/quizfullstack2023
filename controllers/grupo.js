@@ -137,3 +137,55 @@ exports.edit = async (req, res, next) => {
   //Se llama a la renderizacion de la vista, incluyendo como parametro el grupo, todos los juegos y los juegos del grupo
   res.render("grupos/edit.ejs", { grupo, todosJuegos, grupoJuegosIds });
 };
+
+
+//PUT /grupos/:grupoId
+exports.update = async (req, res, next) => {
+
+  //Obtnemos los parametros del formulario POST que estan accesibles en req.body (se asignan automaticamente al llevar el mismo nombre)
+  const {nombre, imagen, juegosIds = []} = req.body;
+  
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {grupo} = req.load;
+
+  //Se actualizan los valores de grupo con los strings recibidos del formulario
+  grupo.nombre = nombre;
+  grupo.imagen = imagen;
+
+  try {
+    //Guarda los campos nombre e imagen
+    await grupo.save({fields: ["nombre", "imagen"]});
+
+    //Guardamos los juegos que se han chequeado en el formulario y contenidos en la variable juegosIds
+    await grupo.setJuegos(juegosIds);
+
+    //Enviar mensaje flash de grupo actualizado con exito
+    req.flash('exito', 'Grupo actualizado satisfactoriamente');
+
+    //Una vez actualizado en la base de datos el grupo, se redirige al index de grupos
+    res.redirect('/grupos/');   
+    
+  } catch (error) {
+    //Si algun cajetin esta vacio se generara un error de validacion
+    if (error instanceof Sequelize.ValidationError) {
+
+      //Enviar mensaje flash de error durante la actualizacion del grupo
+      req.flash('error', 'Hay errores en el formulario');
+      console.log('Hay errores en el formulario');
+      
+      error.errors.forEach(({ message }) => {
+        req.flash('error', message);
+        console.log(message)});
+        const todosJuegos = await models.Juego.findAll();
+
+      res.render("grupos/edit.ejs", { juego, todosJuegos, grupoJuegosIds: juegosIds });
+    }
+    else {
+      //Enviar mensaje flash de error durante la actualizacion del grupo
+      req.flash('error', 'Error actualizando un grupo');
+
+      //Si hay errores en el acceso a la bbdd se pasa al siguiente MW de error
+      next(error);
+    }
+  }
+};

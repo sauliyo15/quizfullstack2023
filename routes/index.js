@@ -173,8 +173,8 @@ router.get('/grupos', grupoController.index);
 router.get('/grupos/new', grupoController.new);
 router.post('/grupos', grupoController.create);
 router.get('/grupos/:grupoId(\\d+)/edit', grupoController.edit);
-/*router.put('/grupos/:grupoId(\\d+)', grupoController.update);
-router.delete('/grupos/:grupoId(\\d+)', grupoController.destroy);*/
+router.put('/grupos/:grupoId(\\d+)', grupoController.update);
+//router.delete('/grupos/:grupoId(\\d+)', grupoController.destroy);
 
 //Instalacion de los MWs para atender a las rutas que permiten jugar con los grupos
 //router.get('/grupos/:grupoId(\\d+)/randomplay',  grupoController.randomPlay);
