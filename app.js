@@ -54,7 +54,9 @@ app.set('view engine', 'ejs');
 //Instlacion de MWs genericos instalados como paquetes npm
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+//Se activa la propiedad extended a true para poder recibir arrays en la url
+app.use(express.urlencoded({ extended: true }));
 
 //Cookieparser para el manejo de cookies
 app.use(cookieParser());

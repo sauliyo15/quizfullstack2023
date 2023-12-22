@@ -120,3 +120,20 @@ exports.create = async (req, res, next) => {
     }
   }
 };
+
+
+//GET /grupos/:grupoId/edit
+exports.edit = async (req, res, next) => {
+  
+  //Obtenemos el objeto precargado en el metodo load que estara guardado en la request de la peticion
+  const {grupo} = req.load;
+
+  //Obtenemos todos los juegos de la base de datos
+  const todosJuegos = await models.Juego.findAll();
+
+  //Obtenemos todos los juegos que pertenecen a ese grupo (mediante la funcion map reducimos a un array de ids)
+  const grupoJuegosIds = await grupo.getJuegos().map(juego => juego.id);
+
+  //Se llama a la renderizacion de la vista, incluyendo como parametro el grupo, todos los juegos y los juegos del grupo
+  res.render("grupos/edit.ejs", { grupo, todosJuegos, grupoJuegosIds });
+};
