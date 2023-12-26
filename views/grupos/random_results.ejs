@@ -1,0 +1,23 @@
+<h1>Jugar a un Grupo: <%= grupo.nombre %></h1>
+
+<div>Respuestas correctas: <span id="score"><%= puntuacion %></span></div>
+
+<p>
+    La respuesta <strong> <%= respuesta %> </strong> es <%= resultado ? 'correcta'
+    : 'erronea' %>.
+  </p>
+
+<% if (!resultado) { %>
+    <p>Has fallado.</p>
+    <p>
+        <a href="/atras" class="button">Fin del juego</a>
+    </p>
+
+<% } else { %>
+    <p>
+        Juego exitoso.
+    </p>
+    <p>
+        <a href="/grupos/<%= grupo.id %>/randomplay" class="button">Continua jugando</a>
+    </p>
+<% } %>

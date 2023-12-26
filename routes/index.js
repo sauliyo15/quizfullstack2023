@@ -177,8 +177,8 @@ router.put('/grupos/:grupoId(\\d+)', grupoController.update);
 router.delete('/grupos/:grupoId(\\d+)', grupoController.destroy);
 
 //Instalacion de los MWs para atender a las rutas que permiten jugar con los grupos
-//router.get('/grupos/:grupoId(\\d+)/randomplay',  grupoController.randomPlay);
-//router.get('/grupos/:grupoId(\\d+)/randomcheck/:juegoId(\\d+)', grupoController.randomCheck);
+router.get('/grupos/:grupoId(\\d+)/randomplay',  grupoController.randomPlay);
+router.get('/grupos/:grupoId(\\d+)/randomcheck/:juegoId(\\d+)', grupoController.randomCheck);
 
 
 //Se define el modulo como exportable ya que se importará en el fichero de app.js entre otros

@@ -1,0 +1,16 @@
+<h1>Jugar a un Grupo: <%= grupo.nombre %></h1>
+
+<div>Respuestas correctas: <span id="score"><%= puntuacion %></span></div>
+
+<form method="get" action="/grupos/<%= grupo.id %>/randomcheck/<%= juego.id %>">
+
+    <p>
+        Pregunta: <b><%= juego.pregunta %></b>
+    </p>
+
+
+    <div class="wideRow">
+        <input type="text" class="itemWide" id="answer" name="respuesta" value="" placeholder="Respuesta" autocomplete="off"/>
+        <input type="submit" class="itemNarrow" id="send" value="Comprobar">
+    </div>
+</form>

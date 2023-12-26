@@ -212,3 +212,131 @@ exports.destroy = async (req, res, next) => {
     next(error)
   }
 };
+
+
+//GET /grupos/:grupoId/randomplay
+exports.randomPlay = async (req, res, next) => {
+
+  //Obtenemos el grupo (del modelo) precargado con el metodo load
+  const grupo = req.load.grupo;
+
+  try {
+    /*Obtenemos el parametro de la sesion de grupos (si es la primera vez no existira y sera un objeto vacio, 
+    en el que cada propiedad que se creee correspondera a cada grupo accedido)*/
+    req.session.randomGroupPlay = req.session.randomGroupPlay || {};
+
+    /*Dentro del parametro de la session obtenemos la propiedad que corresponde al grupo accedido (sino existe, se 
+    creara con un array vacio (de resueltos) y el ultimo quiz jugado a 0)*/
+    req.session.randomGroupPlay[grupo.id] = req.session.randomGroupPlay[grupo.id] || {lastQuizId: 0, resolved: []};
+
+    //Obtenemos el numero de juegos que tenemos de ese grupo
+    const total = await grupo.countJuegos();
+    
+    //Podemos continuar solo si el grupo tiene juegos
+    if (total > 0) {
+
+      //Con el total y la longitud del array obtenido, sabremos cuantos juegos hay pendientes de ese grupo
+      const quedan = total - req.session.randomGroupPlay[grupo.id].resolved.length;
+
+      //Puntuacion sera la longitud del array de resueltos de ese grupo
+      puntuacion = req.session.randomGroupPlay[grupo.id].resolved.length;
+
+      //Si todavía quedan quizzes por resolver...
+      if (!quedan == 0) {
+
+        let juego = null;
+
+        //Comprobamos si existe la propiedad (ultimoquiz) para ese grupo
+        if (req.session.randomGroupPlay[grupo.id].lastQuizId) {
+          //Si existe cargamos ese juego
+          juego = await models.Juego.findOne({
+            where: {'id': req.session.randomGroupPlay[grupo.id].lastQuizId}
+          });
+        }
+        //Sino...cargamos un juego totalmente aleatorio de ese grupo de los que queden pendientes
+        else {
+          juego = await models.Juego.findOne({
+            where: {'id': {[Sequelize.Op.notIn]: req.session.randomGroupPlay[grupo.id].resolved}},
+            include: [
+              {
+                model: models.Grupo,
+                as: "grupos",
+                where: {id: grupo.id}
+              }
+            ],
+            offset: Math.floor(Math.random() * quedan) 
+          });
+        }
+
+        //Asignamos a la propiedad last quiz, el id del juego cargado del grupo
+        req.session.randomGroupPlay[grupo.id].lastQuizId = juego.id;
+      
+        //Renderizamos la vista con el grupo, juego y puntuacion
+        res.render("grupos/random_play.ejs", {grupo, juego, puntuacion});
+      }
+      //Sino quedan Juegos por resolver...
+      else {
+        //Se borra la propiedad-grupo del objeto de la sesion
+        delete req.session.randomGroupPlay[grupo.id];
+
+        //Se renderiza la vista correspondiente
+        res.render("grupos/random_nomore.ejs", {grupo, puntuacion});
+      }
+    }
+    else {
+      res.redirect('/grupos/');   
+    }
+  } catch (error) {
+    //Configuramos un mensaje flash para mostrarlo en la vista con el resultado fracasado de la operacion
+    req.flash('error', 'Accediendo a Randomplay Grupos: ' + error.message);
+    next(error);
+  }
+};
+
+
+//GET /grupos/:grupoId/randomcheck/:juegoId
+exports.randomCheck = async (req, res, next) => {
+
+  //Obtenemos el grupo (del modelo) precargado con el metodo load
+  const grupo = req.load.grupo;
+
+  //Borramos la propiedad lastquizId de ese grupo, ya que cuando el usuario comprueba un quiz, deja de tener sentido
+  delete req.session.randomGroupPlay[grupo.id].lastQuizId;
+
+  //Obtenemos la información del query
+  const { query } = req;
+
+  //Si hay algun contenido obtenemos el parametro oculto respuesta que genera el boton Comprobar
+  const respuesta = query.respuesta || "";
+
+  //Cargamos el juego ya que esta primitiva contiene el juegoId y se habra cargado con el metodo load
+  const { juego } = req.load;
+
+  //Se comprueba si la respuesta es correcta
+  const resultado = respuesta.toLowerCase().trim() === juego.respuesta.toLowerCase().trim();
+
+  //Obtenemos la puntuacion a partir de la longitud del array de resueltos de ese grupo
+  let puntuacion = req.session.randomGroupPlay[grupo.id].resolved.length;
+
+  //Si la respuesta es correcta...
+  if (resultado) {
+
+    //Se añade el id del juego al array de resueltos de ese grupo
+    req.session.randomGroupPlay[grupo.id].resolved.push(juego.id);
+
+    //Incrementamos la puntuacion
+    puntuacion++;
+  }
+  //Si la respuesta es incorrecta...
+  else {
+  
+    //Se borra la propiedad del objeto que pertenece al grupo, para que a proxima vez que se entre en el se cree de nuevo
+    delete req.session.randomGroupPlay[grupo.id];
+  }
+
+  //Renderizamos a la vista correspondiente con los parametros requeridos
+  res.render("grupos/random_results.ejs", { grupo, puntuacion, resultado, respuesta });
+};
+
+
+
