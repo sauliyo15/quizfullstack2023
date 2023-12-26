@@ -8,7 +8,7 @@
             <td>
                 <a href="/grupos/<%= grupo.id %>/randomplay"><%= grupo.nombre %></a>
             </td>
-            
+            <% if (locals.usuarioLogueado && locals.usuarioLogueado.esAdministrador) { %>
                 <td>
                     <a href="/grupos/<%= grupo.id %>/edit" class="button">Editar</a>
                 </td>
@@ -17,7 +17,7 @@
                        onClick="return confirm('Delete: <%= grupo.nombre %>');"
                        class="button">Borrar</a>
                 </td>
-
+            <% } %>    
             <td>
                 <img src="<%= grupo.imagen || '/images/imagen_no_disponible.png' %>" alt="Imagen del grupo" style="width: 200px; height: 150px;">
             </td>
@@ -25,6 +25,7 @@
         </tr>
     <% } %>
 </table>
-
-
+<br>
+<% if (locals.usuarioLogueado && locals.usuarioLogueado.esAdministrador) { %>
     <a href="/grupos/new" class="button">Crear Nuevo Grupo</a>
+<% } %>
