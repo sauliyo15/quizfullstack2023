@@ -2,28 +2,18 @@
     "name": "Juegos 2023",
     "short_name": "Juegos",
     "icons": [{
-      "src": "icons/camera128.png",
+      "src": "icons/cohete128.png",
         "sizes": "128x128",
         "type": "image/png",
         "purpose": "any maskable"
       }, {
-        "src": "icons/camera192.png",
-        "sizes": "192x192",
-        "type": "image/png",
-        "purpose": "any maskable"
-      },{
-        "src": "icons/camera256.png",
+        "src": "icons/cohete256.png",
         "sizes": "256x256",
         "type": "image/png",
         "purpose": "any maskable"
       },{
-        "src": "icons/camera512.png",
+        "src": "icons/cohete512.png",
         "sizes": "512x512",
-        "type": "image/png",
-        "purpose": "any maskable"
-      }, {
-        "src": "icons/camera640.png",
-        "sizes": "640x640",
         "type": "image/png",
         "purpose": "any maskable"
       }],
